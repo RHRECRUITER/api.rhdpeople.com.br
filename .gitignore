@@ -1,0 +1,14 @@
+/vendor/
+/node_modules/
+/bootstrap/cache/*.php
+/storage/*.key
+/storage/*.log
+/storage/app/*
+!/storage/app/public
+/storage/framework/cache/*
+/storage/framework/sessions/*
+/storage/framework/views/*
+.env
+.phpunit.result.cache
+/.idea/
+/.vscode/
