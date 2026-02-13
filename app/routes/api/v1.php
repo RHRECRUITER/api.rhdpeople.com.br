@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,6 +17,19 @@ use Illuminate\Support\Facades\Route;
 */
 Route::prefix('landing')->group(function () {
     // Healthcheck simples para verificar se a API está respondendo.
-    Route::get('/health', fn () => response()->api(['status' => 'ok']));
+    Route::get('/health', fn() => Response::api([
+        'status'  => 'Online',
+        'version' => 'v1',
+    ]));
 });
 
+Route::prefix('analytics')->group(function () {
+    //Rota para coletar dados de analytics
+    Route::post('/track', function () {
+        return Response::api([
+            'message' => 'Dados de analytics coletados com sucesso',
+        ]);
+    });
+    //Rota para obter uma visão geral dos dados de analytics
+    Route::get('/overview', 'AnalyticsController@overview');
+});
