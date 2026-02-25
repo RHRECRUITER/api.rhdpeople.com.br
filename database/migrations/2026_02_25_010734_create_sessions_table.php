@@ -6,6 +6,13 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    public function __construct()
+    {
+        /**
+         * Use este comando para quando for usar um banco diferente
+         * $this->connection = 'conn_rhdpeople_ladingpage';
+         */
+    }
     /**
      * Run the migrations.
      */
