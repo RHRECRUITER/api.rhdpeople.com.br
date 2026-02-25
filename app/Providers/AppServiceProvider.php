@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Providers;
 
 use Illuminate\Cache\RateLimiting\Limit;
@@ -7,14 +6,17 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
+use App\Domain\Analytics\EventStore;
+use App\Infrastructure\Analytics\InMemoryEventStore;
 
 class AppServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        
+        // Vincula a interface EventStore à implementação inMemory para que possa ser injetada no ingestBatchService. Futuramente alteramos para $this->app->bind(EventStore::class, MysqlEventStore::class);
+        $this->app->bind(EventStore::class, InMemoryEventStore::class);
     }
-    public function boot(): void
+ public function boot(): void
     {
         /*
         |----------------------------------------------------------------------
@@ -55,6 +57,10 @@ class AppServiceProvider extends ServiceProvider
             return Limit::perMinute(10)->by((
                 $request->user()?->id ?: $request->ip()
             ));
+        });
+
+        RateLimiter::for('tracking', function (Request $request) {
+            return Limit::perMinute(60)->by($request->ip());
         });
     }
 }
