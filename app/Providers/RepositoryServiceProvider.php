@@ -20,6 +20,20 @@ use App\Repositories\Eloquent\EloquentPasswordRecoveryRepository;
 use App\Repositories\Contracts\EmployeeInviteRepositoryInterface;
 use App\Repositories\Eloquent\EloquentEmployeeInviteRepository;
 
+use App\Repositories\Contracts\TrackingEventsRepositoryInterface;
+use App\Repositories\Eloquent\EloquentTrackingRepository;
+
+use App\Repositories\Contracts\SessionBlockRepositoryInterface;
+use App\Repositories\Eloquent\EloquentSessionBlockRepository;
+
+use \App\Repositories\Contracts\DailyMetricRepositoryInterface;
+use \App\Repositories\Eloquent\EloquentDailyMetricRepository;
+
+use \App\Repositories\Contracts\LeadRepositoryInterface;
+use \App\Repositories\Eloquent\EloquentLeadRepository;
+
+
+
 class RepositoryServiceProvider extends ServiceProvider
 {
     
@@ -58,7 +72,27 @@ class RepositoryServiceProvider extends ServiceProvider
             EmployeeInviteRepositoryInterface::class, 
             EloquentEmployeeInviteRepository::class
         );
-        
+
+
+        /**
+         * TRACKING
+         */
+        $this->app->bind(
+            TrackingEventsRepositoryInterface::class,
+            EloquentTrackingRepository::class
+        );
+        $this->app->bind(
+            SessionBlockRepositoryInterface::class,
+            EloquentSessionBlockRepository::class
+        );
+        $this->app->bind(
+            DailyMetricRepositoryInterface::class,
+            EloquentDailyMetricRepository::class
+        );
+        $this->app->bind(
+            LeadRepositoryInterface::class,
+            EloquentLeadRepository::class
+        );
     }
 
     /**
