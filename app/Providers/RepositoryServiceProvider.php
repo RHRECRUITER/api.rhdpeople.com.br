@@ -11,11 +11,18 @@ use App\Repositories\Eloquent\EloquentCompanyRepository;
 use App\Repositories\Contracts\UserRepositoryInterface;
 use App\Repositories\Eloquent\EloquentUserRepository;
 
+use App\Repositories\Contracts\EmailTokenRepositoryInterface;
+use App\Repositories\Eloquent\EloquentEmailTokenRepository;
+
+use App\Repositories\Contracts\PasswordRecoveryRepositoryInterface;
+use App\Repositories\Eloquent\EloquentPasswordRecoveryRepository;
+
+use App\Repositories\Contracts\EmployeeInviteRepositoryInterface;
+use App\Repositories\Eloquent\EloquentEmployeeInviteRepository;
+
 class RepositoryServiceProvider extends ServiceProvider
 {
-    /**
-     * Register any application services.
-     */
+    
     public function register(): void
     {
         // BIND DA INTERFACE COM O REPOSITORY
@@ -33,6 +40,25 @@ class RepositoryServiceProvider extends ServiceProvider
             UserRepositoryInterface::class, 
             EloquentUserRepository::class
         );
+
+        /**
+         * EMAIL TOKEN
+         * RECOVERY PASSWORD
+         * EMPLOYEE INVITE
+         */
+        $this->app->bind(
+            EmailTokenRepositoryInterface::class, 
+            EloquentEmailTokenRepository::class
+        );
+        $this->app->bind(
+            PasswordRecoveryRepositoryInterface::class, 
+            EloquentPasswordRecoveryRepository::class
+        );
+        $this->app->bind(
+            EmployeeInviteRepositoryInterface::class, 
+            EloquentEmployeeInviteRepository::class
+        );
+        
     }
 
     /**
