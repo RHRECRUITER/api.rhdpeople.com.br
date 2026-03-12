@@ -5,20 +5,21 @@ namespace App\Models;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, HasUuids;
 
     protected $fillable = [
+        'tenant_id',
         'name',
         'email',
         'password',
-        'empresa_id',
-        'tipo',
-        'ativo',
-        'telefone',
-        'ultimo_acesso',
+        'type',
+        'status',
+        'email_verified_at',
     ];
 
     protected $hidden = [
@@ -28,35 +29,46 @@ class User extends Authenticatable
 
     protected $casts = [
         'email_verified_at' => 'datetime',
-        'ultimo_acesso' => 'datetime',
-        'ativo' => 'boolean',
         'password' => 'hashed',
+        'type' => 'string',
+        'status' => 'string',
     ];
 
-    // Relationships
-    public function empresa()
+    // Relacionamento com Company (Tenant)
+    public function company(): BelongsTo
     {
-        return $this->belongsTo(Empresa::class);
+        return $this->belongsTo(Company::class, 'tenant_id');
     }
 
-    public function logsAcesso()
+    // Helpers de Nível de Acesso
+    public function isSuperAdmin(): bool
     {
-        return $this->hasMany(LogAcesso::class);
+        return $this->type === 'super_admin';
     }
 
-    // Helpers
-    public function isSuperAdmin()
+    public function isSystemAdmin(): bool
     {
-        return $this->tipo === 'super_admin';
+        return $this->type === 'system_admin';
     }
 
-    public function isAdminEmpresa()
+    public function isCompanyAdmin(): bool
     {
-        return $this->tipo === 'admin_empresa';
+        return $this->type === 'company_admin';
     }
 
-    public function isUserDp()
+
+    public function isCompanyUser(): bool
     {
-        return $this->tipo === 'user_dp';
+        return $this->type === 'company_user';
     }
+
+    /**
+     * Helper de Verificação de Status
+     */
+    public function isActive(): bool
+    {
+        return $this->status === 'active';
+    }    
 }
+
+
