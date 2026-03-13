@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\Analytics\V1\Tracking\TrackController;
+use App\Http\Controllers\Api\Landing\Leads\V1\LeadsController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Route;
@@ -23,6 +24,10 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('landing')->group(function () {
     // Healthcheck simples para verificar se a API está respondendo.
     Route::get('/health', fn() => Response::api(['status' => 'ok']));
+
+    Route::post('/leads', [LeadsController::class, 'store'])
+        ->middleware(['throttle:leads'])
+        ->name('landing.leads');
 });
 
 // Rota para métricas de analytics.
