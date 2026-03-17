@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 class Lead extends Model
 {
     use HasUuids;
+    protected $connection = 'conn_rhdpeople_landingpage';
+
 
     protected $fillable = [
         'session_id',

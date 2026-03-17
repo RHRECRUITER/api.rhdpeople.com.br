@@ -6,9 +6,7 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
+    protected $connection = 'conn_rhdpeople_landingpage';
     public function up(): void
     {
         Schema::create('tracking_events', function (Blueprint $table) {
@@ -16,8 +14,8 @@ return new class extends Migration
             
             $table->string('session_id')->index();
 
-            $table->foreignUuid('tenant_id')->nullable()->constrained('companies')->onDelete('cascade');
-            $table->foreignUuid('user_id')->nullable()->constrained('users')->onDelete('cascade');
+            $table->uuid('tenant_id')->nullable()->index();
+            $table->uuid('user_id')->nullable()->index();
 
             $table->enum('event_type', [
                 'page_view',

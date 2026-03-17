@@ -10,6 +10,7 @@ use App\Models\User;
 class Event extends Model
 {
     use HasUuids;
+    protected $connection = 'conn_rhdpeople_landingpage';
 
     protected $table = 'tracking_events';
     
