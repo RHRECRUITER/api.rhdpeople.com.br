@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 class DailyMetric extends Model
 {
     use HasUuids;
+    protected $connection = 'conn_rhdpeople_landingpage';
 
     protected $fillable = [
         'date',

@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class SessionBlock extends Model
 {
     use HasUuids, BelongsToTenant;
+    protected $connection = 'conn_rhdpeople_landingpage';
 
     protected $fillable = [
         'session_id',

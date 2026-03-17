@@ -53,7 +53,7 @@ return [
             ]) : [],
         ],
 
-        'conn_rhdpeople_ladingpage' => [
+        'conn_rhdpeople_landingpage' => [
             'driver' => 'mysql',
             'url' => env('DB_URL_LANDINGPAGE'),
             'host' => env('DB_HOST_LANDINGPAGE', '127.0.0.1'),

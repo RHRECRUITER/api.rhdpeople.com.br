@@ -6,9 +6,8 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
+    protected $connection = 'conn_rhdpeople_landingpage';
+    
     public function up(): void
     {
         Schema::create('leads', function (Blueprint $table) {
