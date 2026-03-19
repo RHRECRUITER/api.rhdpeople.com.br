@@ -34,3 +34,7 @@ Route::middleware(['auth', TenantMiddleware::class])->group(function () {
     // Route::resource('documentos', DocumentoController::class);
     
 });
+
+Route::get('/landingpage', function () {
+    return view('landing.index');
+});
