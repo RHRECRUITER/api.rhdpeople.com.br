@@ -12,3 +12,7 @@
 .phpunit.result.cache
 /.idea/
 /.vscode/
+_ide_helper.php
+
+# Postman collections (local dev)
+/postman/

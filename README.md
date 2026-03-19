@@ -1,66 +1,197 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# RHdPeople — API Base
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Projeto backend em Laravel 11 para suporte ao produto RHdPeople, com endpoints de:
 
-## About Laravel
+- **Landing / Leads (v1)**: recebimento de solicitações de demonstração
+- **Analytics / Tracking (v1)**: ingestão em lote (batch) de eventos do frontend
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+> Observação: este repositório usa Laravel 11, mas as rotas **não** ficam em `routes/`.
+> Elas são carregadas a partir de `app/routes/*` (ver `bootstrap/app.php`).
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Requisitos
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- PHP `^8.2`
+- Composer
+- Node.js + npm (para Vite/Tailwind)
+- MySQL (opcional, dependendo dos drivers em `.env`)
 
-## Learning Laravel
+## Como executar (dev)
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### 1) Instalação
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+```bash
+composer install
+cp .env.develop.example .env
+php artisan key:generate
+```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### 2) Banco de dados (se aplicável)
 
-## Laravel Sponsors
+O projeto pode rodar sem depender do banco para alguns fluxos, mas **se** você estiver usando:
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+- `SESSION_DRIVER=database`
+- `CACHE_STORE=database`
+- `QUEUE_CONNECTION=database`
 
-### Premium Partners
+então você precisa das migrations/tabelas correspondentes.
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+Comandos úteis:
 
-## Contributing
+```bash
+php artisan migrate
+php artisan cache:table
+php artisan queue:table
+php artisan queue:failed-table
+php artisan queue:batches-table
+php artisan migrate
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### 3) Subir backend
 
-## Code of Conduct
+```bash
+php artisan serve
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## Padrão de resposta JSON (API)
 
-## Security Vulnerabilities
+As respostas “controladas” usam `Response::api(...)` (ver `app/Providers/AppServiceProvider.php`), com o formato:
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```json
+{
+  "success": true,
+  "message": "OK",
+  "data": {},
+  "meta": { "timestamp": "2026-03-17T00:00:00+00:00" }
+}
+```
 
-## License
+Erros automáticos (422/404/500 etc.) também são padronizados em `bootstrap/app.php`.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## Endpoints (v1)
+
+Base URL: `{{base_url}}/api/v1`
+
+### Landing — Leads Demo
+
+- **POST** `{{base_url}}/api/v1/landing/leads`
+
+Payload (exemplo):
+
+```json
+{
+  "name": "João Silva",
+  "company_name": "Tech Solutions",
+  "corporate_email": "joao@tech.com",
+  "phone": "+55 (11) 99999-9999",
+  "number_employees": 50,
+  "objective": {
+    "time_tracking": true,
+    "vacation": false,
+    "payroll": true,
+    "documents": false,
+    "reports": false
+  },
+  "form_started_at": 1710280000,
+  "website": ""
+}
+```
+
+Regras principais:
+
+- `corporate_email`: `email:rfc,dns`
+- `objective`: somente módulos permitidos; **pelo menos 1** precisa ser `true`
+- Honeypot: `website` deve estar **presente** e **vazio**
+- Time-trap: `form_started_at` (epoch em segundos) deve ser válido e:
+  - rejeita se “rápido demais” (`< 2s`)
+  - rejeita se “antigo demais” (`> 2h`)
+- Deduplicação por e-mail: bloqueia envios recentes (TTL ~ 1h) via cache
+- Rate limit: `throttle:leads` (10/min por IP)
+
+Referências:
+
+- Request: `app/Http/Requests/Landing/Leads/V1/LeadsRequest.php`
+- Controller: `app/Http/Controllers/Api/Landing/Leads/V1/LeadsController.php`
+- Rotas: `app/routes/api/v1.php`
+
+### Analytics — Tracking (batch)
+
+- **POST** `{{base_url}}/api/v1/analytics/track`
+- Header opcional: `X-Tracking-Token` (depende de `TRACKING_REQUIRE_TOKEN`)
+
+Payload (exemplo):
+
+```json
+{
+  "client_id": "b5f1a6de-7b66-4c1a-8c4f-2b1e0d9b7c21",
+  "session_id": "2e739f0d-9a7a-4b4e-b5f6-0a1b2c3d4e5f",
+  "events": [
+    {
+      "event_id": "a3b2c1d0-1111-2222-3333-444455556666",
+      "type": "page_view",
+      "occurred_at": "2026-03-16T20:11:36+00:00",
+      "page": "/landing",
+      "props": { "section": "form" }
+    }
+  ]
+}
+```
+
+Regras principais:
+
+- `events`: array obrigatório (`min:1`, `max:10`)
+- `events.*.type`: permitido por role (configurado em `config/analytics.php`)
+- Bloqueio de campos extras em `events.*` e `events.*.props` via schema
+- Rate limit: `throttle:tracking` (60/min por IP)
+
+Referências:
+
+- Middleware: `app/Http/Middleware/analytics/TrackingToken.php`
+- Request: `app/Http/Requests/Tracking/TrackBatchRequest.php`
+- Service: `app/Services/Analytics/V1/IngestBatchService.php`
+- Config: `config/analytics.php`
+- Rotas: `app/routes/api/v1.php`
+
+### Outros
+
+- **GET** `{{base_url}}/api/v1/landing/health` — healthcheck simples
+- **GET** `{{base_url}}/api/v1/analytics/overview` — endpoint **mock** (ideação)
+
+## Logs (dev)
+
+- Arquivo: `storage/logs/laravel.log`
+- Eventos úteis:
+  - `leads.demo_requested`
+  - `tracking.batch_received`
+  - `tracking.batch_persisted`
+
+LGPD:
+
+- Em produção, evite logar PII (e-mail/telefone/IP) em texto claro. Prefira hash/masking.
+
+## Troubleshooting
+
+### 500 em todas rotas de API (cache database)
+
+Se o `.env` tiver `CACHE_STORE=database` e não existir a tabela `cache`, o throttle vai quebrar e gerar 500.
+
+Soluções:
+
+- Criar a tabela: `php artisan cache:table && php artisan migrate`
+- Ou trocar temporariamente para `CACHE_STORE=file` (dev)
+
+### Vite manifest not found
+
+Se aparecer `ViteManifestNotFoundException`, rode:
+
+- `npm run dev` (gera `public/hot`) **ou**
+- `npm run build` (gera `public/build/manifest.json`)
+
+## Próximos passos (backlog)
+
+- Persistência real do tracking
+- Gestão de tokens (hash, rotação, revogação)
+- Substituir `GET /analytics/overview` mock por implementação real
+
+## Sobre o Laravel
+
+Framework base: Laravel (https://laravel.com).

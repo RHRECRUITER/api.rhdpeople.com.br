@@ -31,24 +31,15 @@ return [
 
     'connections' => [
 
-        'sqlite' => [
-            'driver' => 'sqlite',
-            'url' => env('DB_URL'),
-            'database' => env('DB_DATABASE', database_path('database.sqlite')),
-            'prefix' => '',
-            'foreign_key_constraints' => env('DB_FOREIGN_KEYS', true),
-            'busy_timeout' => null,
-            'journal_mode' => null,
-            'synchronous' => null,
-        ],
+        
 
-        'mysql' => [
+        'conn_rhdpeople_geral' => [
             'driver' => 'mysql',
             'url' => env('DB_URL'),
             'host' => env('DB_HOST', '127.0.0.1'),
             'port' => env('DB_PORT', '3306'),
-            'database' => env('DB_DATABASE', 'laravel'),
-            'username' => env('DB_USERNAME', 'root'),
+            'database' => env('DB_DATABASE', 'db_rhdpeople_geral'),
+            'username' => env('DB_USERNAME', 'rhdpeople_dbadmin'),
             'password' => env('DB_PASSWORD', ''),
             'unix_socket' => env('DB_SOCKET', ''),
             'charset' => env('DB_CHARSET', 'utf8mb4'),
@@ -60,6 +51,39 @@ return [
             'options' => extension_loaded('pdo_mysql') ? array_filter([
                 PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
             ]) : [],
+        ],
+
+        'conn_rhdpeople_landingpage' => [
+            'driver' => 'mysql',
+            'url' => env('DB_URL_LANDINGPAGE'),
+            'host' => env('DB_HOST_LANDINGPAGE', '127.0.0.1'),
+            'port' => env('DB_PORT_LANDINGPAGE', '3306'),
+            'database' => env('DB_DATABASE_LANDINGPAGE', 'db_rhdpeople_ladingpage'),
+            'username' => env('DB_USERNAME_LANDINGPAGE', 'rhdpeople_dbadmin'),
+            'password' => env('DB_PASSWORD_LANDINGPAGE', ''),
+            'unix_socket' => env('DB_SOCKET_LANDINGPAGE', ''),
+            'charset' => env('DB_CHARSET', 'utf8mb4'),
+            'collation' => env('DB_COLLATION', 'utf8mb4_unicode_ci'),
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'strict' => true,
+            'engine' => null,
+            'options' => extension_loaded('pdo_mysql') ? array_filter([
+                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+            ]) : [],
+        ],
+
+
+/*
+        'sqlite' => [
+            'driver' => 'sqlite',
+            'url' => env('DB_URL'),
+            'database' => env('DB_DATABASE', database_path('database.sqlite')),
+            'prefix' => '',
+            'foreign_key_constraints' => env('DB_FOREIGN_KEYS', true),
+            'busy_timeout' => null,
+            'journal_mode' => null,
+            'synchronous' => null,
         ],
 
         'mariadb' => [
@@ -111,6 +135,7 @@ return [
             // 'encrypt' => env('DB_ENCRYPT', 'yes'),
             // 'trust_server_certificate' => env('DB_TRUST_SERVER_CERTIFICATE', 'false'),
         ],
+*/
 
     ],
 
