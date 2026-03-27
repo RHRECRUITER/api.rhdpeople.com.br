@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\Analytics\V1\Tracking\TrackController;
+use App\Http\Controllers\Api\Auth\AuthController;
 use App\Http\Controllers\Api\Landing\Leads\V1\LeadsController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
@@ -30,6 +31,18 @@ Route::prefix('landing')->group(function () {
         ->name('landing.leads');
 });
 
+// Rotas de Autenticação (Conceituais / Dev)
+Route::prefix('auth')->group(function () {
+    // Rota pública de login
+    Route::post('/login', [AuthController::class, 'login'])->name('auth.login');
+
+    // Rotas protegidas (exigem cookie de sessão válido do Sanctum)
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::get('/me', [AuthController::class, 'me'])->name('auth.me');
+        Route::post('/logout', [AuthController::class, 'logout'])->name('auth.logout');
+    });
+});
+
 // Rota para métricas de analytics.
 
 Route::prefix('analytics')->group(function () {
@@ -38,7 +51,7 @@ Route::prefix('analytics')->group(function () {
         ->middleware(['throttle:tracking', \App\Http\Middleware\analytics\TrackingToken::class])
         ->name('analytics.track');
 
-        //Rota ficticia para retornar uma visão geral de metricas.(ainda em etapa de ideação).
+    //Rota ficticia para retornar uma visão geral de metricas.(ainda em etapa de ideação).
     Route::get('/overview', function (Request $request) {
 
         return Response::api([
@@ -90,5 +103,5 @@ Route::prefix('analytics')->group(function () {
                 ],
             ],
         ]);
-    })->name('analytics.overview');
+    })->middleware('auth:sanctum')->name('analytics.overview');
 });

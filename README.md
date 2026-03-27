@@ -151,6 +151,23 @@ Referências:
 - Config: `config/analytics.php`
 - Rotas: `app/routes/api/v1.php`
 
+### Autenticação / Auth (Conceitual / Dev)
+
+> **⚠️ IMPORTANTE:** A API de login atual é **meramente conceitual**. Ela foi criada temporariamente para destravar o desenvolvimento do frontend e permitir a criação e o teste de endpoints que exigem autenticação (`auth:sanctum`). O fluxo real de identidade será definido e refatorado futuramente.
+
+A autenticação utiliza o **Laravel Sanctum no modo Stateful (SPA)**. Isso significa que a API não emite um "Bearer Token" em texto para o frontend, mas sim estabelece uma **Sessão baseada em Cookies** (protegida contra XSS e CSRF).
+
+- **POST** `{{base_url}}/api/v1/auth/login`
+  - **Payload:** `{ "email": "usuario@teste.com", "password": "password" }`
+  - **Ação:** Valida credenciais, gera novo ID de sessão (blindagem contra *Session Fixation*) e retorna os cookies `laravel_session` e `XSRF-TOKEN` no header da resposta.
+- **GET** `{{base_url}}/api/v1/auth/me`
+  - **Ação:** Retorna os dados do usuário logado atual. (Exige o envio dos cookies gerados no login).
+- **POST** `{{base_url}}/api/v1/auth/logout`
+  - **Ação:** Invalida a sessão atual e revoga os cookies de autenticação do navegador.
+
+*Dica para testes via Postman/Insomnia:* Como o fluxo é Stateful, certifique-se de que o seu cliente HTTP está configurado para **armazenar e enviar cookies** automaticamente após bater na rota de `/login`.
+
+
 ### Outros
 
 - **GET** `{{base_url}}/api/v1/landing/health` — healthcheck simples

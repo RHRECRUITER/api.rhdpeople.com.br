@@ -6,6 +6,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
@@ -25,7 +26,7 @@ use Symfony\Component\HttpKernel\Exception\UnsupportedMediaTypeHttpException;
 | - 404 para rota inexistente
 | - 500 genérico (sem vazar stacktrace)
 |
-| Outros status comuns também são tratados (401/403/405/400/409/415/429).
+| Outros status comuns também são tratados (401/403/405/400/409/415/419/429).
 |
 */
 
@@ -38,6 +39,9 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+        $middleware->api(prepend: [
+            \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
+        ]);
         $middleware->throttleApi('api');
     })
      ->withExceptions(function (Exceptions $exceptions) {
@@ -135,11 +139,25 @@ return Application::configure(basePath: dirname(__DIR__))
             ]);
         });
 
+        // 419 - CSRF Token Mismatch (Falha de segurança Stateful).
+        $exceptions->render(function (HttpException $e, Request $request) use ($isApi, $apiError) {
+            if (! $isApi($request) || $e->getStatusCode() !== 419) return null;
+
+            return $apiError(419, 'CSRF token mismatch. The request needs a valid XSRF-TOKEN.');
+        });
+
         // 500 - Genérico, sem expor detalhes (stacktrace/mensagem interna).
         $exceptions->render(function (Throwable $e, Request $request) use ($isApi, $apiError) {
             if (! $isApi($request)) return null;
 
-            return $apiError(500, 'Internal server error');
+            $message = config('app.debug') ? $e->getMessage() : 'Internal server error';
+            $extra = config('app.debug') ? [
+                'exception' => get_class($e),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+            ] : [];
+
+            return $apiError(500, $message, $extra);
         });
     })
     ->create();
