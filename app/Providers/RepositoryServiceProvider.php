@@ -32,11 +32,18 @@ use \App\Repositories\Eloquent\EloquentDailyMetricRepository;
 use \App\Repositories\Contracts\LeadRepositoryInterface;
 use \App\Repositories\Eloquent\EloquentLeadRepository;
 
+use \App\Repositories\Contracts\PlanRepositoryInterface;
+use \App\Repositories\Eloquent\EloquentPlanRepository;
 
+use \App\Repositories\Contracts\LicenseRepositoryInterface;
+use \App\Repositories\Eloquent\EloquentLicenseRepository;
+
+use \App\Repositories\Contracts\ContractRepositoryInterface;
+use \App\Repositories\Eloquent\EloquentContractRepository;
 
 class RepositoryServiceProvider extends ServiceProvider
 {
-    
+
     public function register(): void
     {
         // BIND DA INTERFACE COM O REPOSITORY
@@ -44,14 +51,14 @@ class RepositoryServiceProvider extends ServiceProvider
          * COMPANY
          */
         $this->app->bind(
-            CompanyRepositoryInterface::class, 
+            CompanyRepositoryInterface::class,
             EloquentCompanyRepository::class
         );
         /**
          * USER
          */
         $this->app->bind(
-            UserRepositoryInterface::class, 
+            UserRepositoryInterface::class,
             EloquentUserRepository::class
         );
 
@@ -61,15 +68,15 @@ class RepositoryServiceProvider extends ServiceProvider
          * EMPLOYEE INVITE
          */
         $this->app->bind(
-            EmailTokenRepositoryInterface::class, 
+            EmailTokenRepositoryInterface::class,
             EloquentEmailTokenRepository::class
         );
         $this->app->bind(
-            PasswordRecoveryRepositoryInterface::class, 
+            PasswordRecoveryRepositoryInterface::class,
             EloquentPasswordRecoveryRepository::class
         );
         $this->app->bind(
-            EmployeeInviteRepositoryInterface::class, 
+            EmployeeInviteRepositoryInterface::class,
             EloquentEmployeeInviteRepository::class
         );
 
@@ -93,6 +100,20 @@ class RepositoryServiceProvider extends ServiceProvider
             LeadRepositoryInterface::class,
             EloquentLeadRepository::class
         );
+
+        /**
+         * PLAN
+         */
+
+        $this->app->bind(
+            PlanRepositoryInterface::class,
+            EloquentPlanRepository::class);
+        $this->app->bind(
+            LicenseRepositoryInterface::class,
+            EloquentLicenseRepository::class);
+        $this->app->bind(
+            ContractRepositoryInterface::class,
+            EloquentContractRepository::class);
     }
 
     /**

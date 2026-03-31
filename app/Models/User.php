@@ -7,6 +7,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+
+use App\Enums\StatusUser;
 
 class User extends Authenticatable
 {
@@ -31,7 +34,8 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
         'type' => 'string',
-        'status' => 'string',
+        //'status' => 'string',
+        'status' => StatusUser::class,
     ];
 
     // Relacionamento com Company (Tenant)
@@ -39,6 +43,12 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Company::class, 'tenant_id');
     }
+
+    //Relacionamento com License
+    public function license(): HasOne{
+        return $this->HasOne(License::class);
+    }
+
 
     // Helpers de Nível de Acesso
     public function isSuperAdmin(): bool
@@ -68,7 +78,7 @@ class User extends Authenticatable
     public function isActive(): bool
     {
         return $this->status === 'active';
-    }    
+    }
 }
 
 
