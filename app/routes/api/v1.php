@@ -48,7 +48,7 @@ Route::prefix('auth')->group(function () {
 Route::prefix('analytics')->group(function () {
     // Rota para tracking de eventos - recebe dados de eventos do frontend.
     Route::post('/track', [TrackController::class, 'store'])
-        ->middleware(['throttle:tracking', \App\Http\Middleware\analytics\TrackingToken::class])
+        ->middleware(['throttle:tracking'])
         ->name('analytics.track');
 
     //Rota ficticia para retornar uma visão geral de metricas.(ainda em etapa de ideação).
