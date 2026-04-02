@@ -1,8 +1,9 @@
 <?php
 namespace App\Services\Analytics\V1;
 
-use App\Domain\Analytics\EventStore;
 use App\Domain\Analytics\EventSchema;
+use App\Repositories\Contracts\TrackingEventsRepositoryInterface;
+use App\Repositories\Contracts\SessionBlockRepositoryInterface;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
@@ -10,25 +11,20 @@ class IngestBatchService
 {
     /**
      * Notas: Recebe um batch de eventos, valida e sanitiza os dados, e persiste ignorando duplicados. Retorna um resumo do processamento.
-      - O uso de event_id UNIQUE no banco é crucial para garantir a idempotência e evitar duplicados mesmo em casos de falhas ou reenvios.
-      - A validação e limpeza dos dados é feita antes da persistência para garantir a qualidade dos dados armazenados.
-      - O logging detalhado permite monitorar o comportamento do sistema e identificar possíveis problemas ou padrões nos eventos recebidos (Apenas para debugging).
-      - A injeção do EventStore via constructor permite flexibilidade na implementação do armazenamento e facilita testes unitários sem dependência direta do banco de dados.
+    - A validação e limpeza dos dados é feita antes da persistência para garantir a qualidade dos dados armazenados.
+    - O logging detalhado permite monitorar o comportamento do sistema e identificar possíveis problemas ou padrões nos eventos recebidos (Apenas para debugging).
      */
-    // Injetar o EventStore via constructor para permitir flexibilidade na implementação do DB futuramente e  para teste  pre-banco de dados.
-    public function __construct(private EventStore $store)
-    {}
-
+    public function __construct(
+        private TrackingEventsRepositoryInterface $trackingRepo,
+        private SessionBlockRepositoryInterface $sessionBlockRepo
+    ) {}
     public function ingest(array $payload): array
     {
-        $events = $payload['events'] ?? [];
+        $events   = $payload['events'] ?? [];
         $accepted = count($events);
 
         $traceId = (string) Str::uuid();
-        $role = (string) request()->attributes->get(
-            'tracking_role',
-            (string) config('analytics.tracking.default_role', 'public')
-        );
+        $role    = (string) config('analytics.tracking.default_role', 'public');
         $invalid = 0;
 
         $seenInBatch       = [];
@@ -72,13 +68,18 @@ class IngestBatchService
                 $event['props'] = $filtered;
             }
 
+            //injeta os dados da raiz do payload no banco
+            $event['session_id'] = $payload['session_id'] ?? null;
+            $event['tenant_id']  = $payload['client_id'] ?? null;
+            $event['user_id']    = auth('sanctum')->id();
+
             $uniqueEvents[] = $event;
 
         }
         // Atualiza a contagem de eventos validos após limpeza de duplicados e validação de props.
         $events = $uniqueEvents;
 
-        $unique = count($events);
+        $unique     = count($events);
         $typeCounts = [];
         foreach ($events as $event) {
             $type = $event['type'] ?? null;
@@ -102,19 +103,24 @@ class IngestBatchService
             'event_type_counts'   => $typeCounts,
         ]);
 
-        // TODO: persistir em lote ignorando duplicados (event_id UNIQUE)
-        // $inserted = $this->eventStore->insertIgnoringDuplicates($events);
-
-        $result = $this->store->insertIgnoringDuplicates($events);
+        $result          = $this->trackingRepo->insertIgnoringDuplicates($events);
         $duplicatesTotal = $duplicatesInBatch + $result['duplicates'];
 
+        if (! empty($payload['session_id'])) {
+            $summary = $this->trackingRepo->getSessionSummary($payload['session_id']);
+            if ($summary) {
+                $summary['tenant_id'] = $payload['client_id'] ?? null;
+                $this->sessionBlockRepo->updateOrCreateFromTracking($payload['session_id'], $summary);
+            }
+        }
+
         Log::info('tracking.batch_persisted', [
-            'trace_id'             => $traceId,
-            'role'                 => $role,
-            'inserted'             => $result['inserted'],
-            'duplicates'           => $duplicatesTotal,
-            'duplicates_in_db'     => $result['duplicates'],
-            'duplicates_in_batch'  => $duplicatesInBatch,
+            'trace_id'            => $traceId,
+            'role'                => $role,
+            'inserted'            => $result['inserted'],
+            'duplicates'          => $duplicatesTotal,
+            'duplicates_in_db'    => $result['duplicates'],
+            'duplicates_in_batch' => $duplicatesInBatch,
         ]);
 
         return [
