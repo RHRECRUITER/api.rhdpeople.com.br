@@ -20,7 +20,7 @@ return [
     'allowed_methods' => ['*'],
 
     //Apontado para variavel de ambiente onde ficara informado o url do frontend ou localhost para dev.
-    'allowed_origins' => [env('FRONTEND_URL', 'http://localhost:3000')],
+    'allowed_origins' => explode(',', env('CORS_ALLOWED_ORIGINS', env('FRONTEND_URL', 'http://localhost:3000'))),
 
     'allowed_origins_patterns' => [],
 
@@ -30,7 +30,6 @@ return [
 
     'max_age' => 0,
 
-    //Alterar para true somente se o sanctum for aceitar cookies/sessions de outro dominio.
     'supports_credentials' => true,
 
 ];
