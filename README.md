@@ -67,6 +67,18 @@ As respostas “controladas” usam `Response::api(...)` (ver `app/Providers/App
 
 Erros automáticos (422/404/500 etc.) também são padronizados em `bootstrap/app.php`.
 
+## Segurança e CORS
+
+Para garantir que a API seja acessada apenas pelos frontends autorizados, o projeto possui restrições de **CORS** e configuração de estado do **Sanctum**.
+
+No seu arquivo `.env`, configure as seguintes variáveis (separadas por vírgula):
+
+```env
+CORS_ALLOWED_ORIGINS=http://localhost:3000,http://127.0.0.1:3000,https://rhdpeople.com.br
+SANCTUM_STATEFUL_DOMAINS=localhost:3000,127.0.0.1:3000,rhdpeople.com.br
+```
+Isso garante que navegadores bloqueiem chamadas de sites de terceiros para as rotas públicas (CORS) e orienta o Sanctum a exigir os cookies de proteção CSRF corretamente no painel autenticado (Stateful).
+
 ## Endpoints (v1)
 
 Base URL: `{{base_url}}/api/v1`
@@ -116,7 +128,10 @@ Referências:
 ### Analytics — Tracking (batch)
 
 - **POST** `{{base_url}}/api/v1/analytics/track`
-- Header opcional: `X-Tracking-Token` (depende de `TRACKING_REQUIRE_TOKEN`)
+- **Headers**: 
+  - `Origin` ou `Referer`: Deve corresponder aos domínios permitidos nas configurações de CORS.
+  - `X-XSRF-TOKEN`: Obrigatório **apenas** se a requisição vier de um domínio *Stateful* (SPA). O valor é o token fornecido via cookie (`XSRF-TOKEN`) e geralmente é injetado automaticamente pelo Axios/Fetch.
+  - `Content-Type`: `application/json`
 
 Payload (exemplo):
 
@@ -126,12 +141,12 @@ Payload (exemplo):
   "session_id": "2e739f0d-9a7a-4b4e-b5f6-0a1b2c3d4e5f",
   "events": [
     {
-      "event_id": "a3b2c1d0-1111-2222-3333-444455556666",
+      "event_id": "33333333-3333-3333-3333-000000000003",
       "type": "page_view",
-      "occurred_at": "2026-03-16T20:11:36+00:00",
+      "occurred_at": "2026-03-17T10:00:45+00:00",
       "page": "/landing",
-      "props": { "section": "form" }
-    }
+      "props": { "section": "features" }
+    },
   ]
 }
 ```
@@ -143,9 +158,12 @@ Regras principais:
 - Bloqueio de campos extras em `events.*` e `events.*.props` via schema
 - Rate limit: `throttle:tracking` (60/min por IP)
 
+> **Nota de Arquitetura:** A ingestão agora possui **persistência real no banco de dados com garantia de idempotência**. O `IngestBatchService` valida, sanitiza e descarta silenciosamente eventos duplicados dentro do mesmo lote ou que já existam no banco de dados (validação pelo `event_id`).
+
 Referências:
 
-- Middleware: `app/Http/Middleware/analytics/TrackingToken.php`
+- Middleware: `throttle:tracking` (Rate Limit) e `EnsureFrontendRequestsAreStateful` (Global da API)
+- Controller: `app/Http/Controllers/Api/Analytics/V1/Tracking/TrackController.php`
 - Request: `app/Http/Requests/Tracking/TrackBatchRequest.php`
 - Service: `app/Services/Analytics/V1/IngestBatchService.php`
 - Config: `config/analytics.php`
@@ -205,7 +223,6 @@ Se aparecer `ViteManifestNotFoundException`, rode:
 
 ## Próximos passos (backlog)
 
-- Persistência real do tracking
 - Gestão de tokens (hash, rotação, revogação)
 - Substituir `GET /analytics/overview` mock por implementação real
 
