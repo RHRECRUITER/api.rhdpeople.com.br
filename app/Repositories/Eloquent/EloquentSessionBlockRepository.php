@@ -19,7 +19,7 @@ class EloquentSessionBlockRepository implements SessionBlockRepositoryInterface
                 'tenant_id'        => $data['tenant_id'],
                 'started_at'       => $data['started_at'],
                 'ended_at'         => $data['ended_at'] ?? now(),
-                'duration_seconds' => $data['duration'] ?? 0,
+                'duration_seconds' => $data['duration_seconds'] ?? 0,
                 'landing_page'     => $data['landing_page'] ?? null,
                 'exit_page'        => $data['exit_page'] ?? null,
             ]
