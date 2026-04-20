@@ -3,35 +3,53 @@
 use App\Http\Controllers\Api\Analytics\V1\Tracking\TrackController;
 use App\Http\Controllers\Api\Auth\AuthController;
 use App\Http\Controllers\Api\Landing\Leads\V1\LeadsController;
+use App\Http\Controllers\Api\Security\V1\CaptchaController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Route;
 
-/*
-|--------------------------------------------------------------------------
-| API v1
-|--------------------------------------------------------------------------
-|
-| Este arquivo concentra as rotas da versão v1 da API. Ele é carregado por
-| routes/api.php dentro do prefixo "/api/v1".
-|
-| Aqui organizamos por módulos/prefixos. Exemplo:
-| - /api/v1/landing/...
-|
-*/
+/**
+ * API Routes - Version 1
+ * * Este arquivo define todos os endpoints da versão 1 da API RHDPeople.
+ * A organização segue uma estrutura modular baseada em prefixos para facilitar
+ * a manutenção e a aplicação de políticas de segurança (Throttling, Auth).
+ * * @author Luan Quevedo
+ * @since 2026-04
+ */
 
-// Endpoint para landing page  - pode ser usado para healthcheck ou outras rotas relacionadas.
+/**
+ * Módulo: Security
+ * Gerenciamento de desafios visuais e tokens de validação.
+ * Throttling: Limite de 10 tentativas por minuto (configurado em AppServiceProvider).
+ */
+Route::prefix('security')->group(function () {
+    Route::get('/captcha/generate', [CaptchaController::class, 'getCaptcha'])
+        ->middleware('throttle:captcha')
+        ->name('security.captcha.generate');
 
+    Route::post('/captcha/verify', [CaptchaController::class, 'validateCaptcha'])
+        ->middleware('throttle:captcha')
+        ->name('security.captcha.verify');
+});
+
+/**
+ * Módulo: Landing Page
+ * Endpoints públicos voltados para conversão e monitoramento de saúde da aplicação.
+ */
 Route::prefix('landing')->group(function () {
     // Healthcheck simples para verificar se a API está respondendo.
     Route::get('/health', fn() => Response::api(['status' => 'ok']));
 
+    // Registro de Leads: Protegido por Captcha atômico com contexto de landing page.
     Route::post('/leads', [LeadsController::class, 'store'])
-        ->middleware(['throttle:leads'])
+        ->middleware('captcha.check:leads_landing')
         ->name('landing.leads');
 });
 
-// Rotas de Autenticação (Conceituais / Dev)
+/**
+ * Módulo: Auth
+ * Gerenciamento de sessões e autenticação via Laravel Sanctum (Stateful).
+ */
 Route::prefix('auth')->group(function () {
     // Rota pública de login
     Route::post('/login', [AuthController::class, 'login'])->name('auth.login');
@@ -43,10 +61,15 @@ Route::prefix('auth')->group(function () {
     });
 });
 
-// Rota para métricas de analytics.
-
+/**
+ * Módulo: Analytics
+ * Coleta de métricas comportamentais e exibição de indicadores de engajamento.
+ */
 Route::prefix('analytics')->group(function () {
-    // Rota para tracking de eventos - recebe dados de eventos do frontend.
+    /**
+     * Ingestão de Eventos: Recebe cliques, scroll e interações do frontend.
+     * Throttling: 60 requisições por minuto para suportar múltiplos eventos de tracking.
+     */
     Route::post('/track', [TrackController::class, 'store'])
         ->middleware(['throttle:tracking'])
         ->name('analytics.track');
