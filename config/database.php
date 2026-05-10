@@ -31,7 +31,7 @@ return [
 
     'connections' => [
 
-        
+
 
         'conn_rhdpeople_geral' => [
             'driver' => 'mysql',
@@ -58,7 +58,7 @@ return [
             'url' => env('DB_URL_LANDINGPAGE'),
             'host' => env('DB_HOST_LANDINGPAGE', '127.0.0.1'),
             'port' => env('DB_PORT_LANDINGPAGE', '3306'),
-            'database' => env('DB_DATABASE_LANDINGPAGE', 'db_rhdpeople_ladingpage'),
+            'database' => env('DB_DATABASE_LANDINGPAGE', 'db_rhdpeople_landingpage'),
             'username' => env('DB_USERNAME_LANDINGPAGE', 'rhdpeople_dbadmin'),
             'password' => env('DB_PASSWORD_LANDINGPAGE', ''),
             'unix_socket' => env('DB_SOCKET_LANDINGPAGE', ''),
