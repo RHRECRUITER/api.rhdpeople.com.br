@@ -1,44 +1,42 @@
 # RHdPeople — API Base
 
-Projeto backend em Laravel 11 para suporte ao produto RHdPeople, com endpoints de:
+Projeto backend em Laravel 11 para suporte ao produto **RHdPeople**.
 
-- **Landing / Leads (v1)**: recebimento de solicitações de demonstração
-- **Analytics / Tracking (v1)**: ingestão em lote (batch) de eventos do frontend
+---
 
-> Observação: este repositório usa Laravel 11, mas as rotas **não** ficam em `routes/`.
-> Elas são carregadas a partir de `app/routes/*` (ver `bootstrap/app.php`).
+## 📦 Módulos Principais
 
-## Requisitos
+* **Security (v1):** Geração e validação atômica de desafios visuais (Captcha).
+* **Landing / Leads (v1):** Captação segura de solicitações de demonstração B2B.
+* **Analytics / Tracking (v1):** Ingestão em lote (batch) de eventos do frontend.
+* **Auth (v1):** Gestão de identidade e sessões Stateful.
 
-- PHP `^8.2`
-- Composer
-- Node.js + npm (para Vite/Tailwind)
-- MySQL (opcional, dependendo dos drivers em `.env`)
+> [!IMPORTANT]
+> **Observação de Arquitetura:** As rotas não ficam em `routes/`. Elas seguem um padrão modular e são carregadas a partir de `app/routes/*` (ver `bootstrap/app.php`).
 
-## Como executar (dev)
+---
+
+## 🛠 Requisitos
+
+* PHP `^8.2` (com extensão **GD** habilitada)
+* **Composer**
+* **Node.js + npm** (Vite / Tailwind)
+* **Redis** (Recomendado para cache, filas e rate limiting)
+* **MySQL** (Opcional)
+
+---
+
+## 🚀 Como executar (dev)
 
 ### 1) Instalação
-
 ```bash
 composer install
 cp .env.develop.example .env
 php artisan key:generate
 ```
 
-### 2) Banco de dados (se aplicável)
-
-O projeto pode rodar sem depender do banco para alguns fluxos, mas **se** você estiver usando:
-
-- `SESSION_DRIVER=database`
-- `CACHE_STORE=database`
-- `QUEUE_CONNECTION=database`
-
-então você precisa das migrations/tabelas correspondentes.
-
-Comandos úteis:
-
+### 2) Banco de Dados e Cache
 ```bash
-php artisan migrate
 php artisan cache:table
 php artisan queue:table
 php artisan queue:failed-table
@@ -47,151 +45,132 @@ php artisan migrate
 ```
 
 ### 3) Subir backend
-
 ```bash
 php artisan serve
 ```
 
-## Padrão de resposta JSON (API)
+---
 
-As respostas “controladas” usam `Response::api(...)` (ver `app/Providers/AppServiceProvider.php`), com o formato:
+## 🛡 Arquitetura de Segurança (V1)
 
+O RHdPeople adota uma postura rigorosa contra bots/spam através de defesa em camadas.
+
+### 🔐 CORS e Sanctum (Stateful)
+Configure no seu `.env`:
+```env
+CORS_ALLOWED_ORIGINS=http://localhost:3000,http://127.0.0.1:3000,https://rhdpeople.com.br
+SANCTUM_STATEFUL_DOMAINS=localhost:3000,127.0.0.1:3000,rhdpeople.com.br
+```
+
+### 📄 Formulários Públicos
+* **Honeypot (website):** Campo invisível para capturar bots.
+* **Time-trap (form_started_at):** Bloqueia envio rápido demais (automatizado).
+* **Captcha Atômico:** Gerado via GD em memória (sem uso de disco). Validado com `Cache::pull` (uso único).
+* **Token de Contexto:** Vinculado à sessão. Evita reutilização de validações em outros endpoints.
+
+---
+
+## 📡 Endpoints (v1)
+
+**Base URL:** `{{base_url}}/api/v1`
+
+### 📦 Padrão de Resposta (JSON)
 ```json
 {
   "success": true,
   "message": "OK",
   "data": {},
-  "meta": { "timestamp": "2026-03-17T00:00:00+00:00" }
+  "meta": {
+    "timestamp": "2026-04-20T00:00:00+00:00"
+  }
 }
 ```
 
-Erros automáticos (422/404/500 etc.) também são padronizados em `bootstrap/app.php`.
+### 🔐 1. Security — Captcha
 
-## Endpoints (v1)
+* **Gerar captcha**
+    * `GET /security/captcha/generate`
+    * Retorna imagem + chave do desafio.
+    * *Rate limit:* `throttle:captcha` (10/min).
 
-Base URL: `{{base_url}}/api/v1`
+* **Validar captcha**
+    * `POST /security/captcha/verify`
+    * **Payload:**
+    ```json
+    {
+      "captcha_key": "uuid-v7-gerado-no-get",
+      "captcha_code": "k9Z2A",
+      "context": "leads_landing"
+    }
+    ```
+    * **Sucesso:**
+    ```json
+    { "validation_token": "token_alfanumerico_de_64_chars" }
+    ```
 
-### Landing — Leads Demo
+---
 
-- **POST** `{{base_url}}/api/v1/landing/leads`
+### 🧲 2. Landing — Leads
 
-Payload (exemplo):
-
+* `POST /landing/leads`
+* **Headers:** `CSRF Token` (se Stateful).
+* **Middleware:** `captcha.check:leads_landing`.
+* **Payload:**
 ```json
 {
   "name": "João Silva",
   "company_name": "Tech Solutions",
   "corporate_email": "joao@tech.com",
-  "phone": "+55 (11) 99999-9999",
+  "phone": "11999999999",
   "number_employees": 50,
   "objective": {
     "time_tracking": true,
-    "vacation": false,
-    "payroll": true,
-    "documents": false,
-    "reports": false
+    "payroll": true
   },
   "form_started_at": 1710280000,
-  "website": ""
+  "website": "",
+  "validation_token": "token_obtido_na_verificacao_do_captcha"
 }
 ```
 
-Regras principais:
+---
 
-- `corporate_email`: `email:rfc,dns`
-- `objective`: somente módulos permitidos; **pelo menos 1** precisa ser `true`
-- Honeypot: `website` deve estar **presente** e **vazio**
-- Time-trap: `form_started_at` (epoch em segundos) deve ser válido e:
-  - rejeita se “rápido demais” (`< 2s`)
-  - rejeita se “antigo demais” (`> 2h`)
-- Deduplicação por e-mail: bloqueia envios recentes (TTL ~ 1h) via cache
-- Rate limit: `throttle:leads` (10/min por IP)
+### 📊 3. Analytics — Tracking (Batch)
 
-Referências:
+* `POST /analytics/track`
+* Ingestão com idempotência (descarta eventos com `event_id` duplicado).
+* *Rate limit:* `throttle:tracking` (60/min).
 
-- Request: `app/Http/Requests/Landing/Leads/V1/LeadsRequest.php`
-- Controller: `app/Http/Controllers/Api/Landing/Leads/V1/LeadsController.php`
-- Rotas: `app/routes/api/v1.php`
+---
 
-### Analytics — Tracking (batch)
+### 🔑 4. Auth (Sanctum Stateful)
 
-- **POST** `{{base_url}}/api/v1/analytics/track`
-- Header opcional: `X-Tracking-Token` (depende de `TRACKING_REQUIRE_TOKEN`)
+> [!WARNING]
+> **Status:** Em ideação (fluxo conceitual).
 
-Payload (exemplo):
+* `POST /auth/login` → Gera nova sessão (anti session fixation).
+* `GET /auth/me` → Dados do usuário logado.
+* `POST /auth/logout` → Revoga sessão e limpa cookies.
 
-```json
-{
-  "client_id": "b5f1a6de-7b66-4c1a-8c4f-2b1e0d9b7c21",
-  "session_id": "2e739f0d-9a7a-4b4e-b5f6-0a1b2c3d4e5f",
-  "events": [
-    {
-      "event_id": "a3b2c1d0-1111-2222-3333-444455556666",
-      "type": "page_view",
-      "occurred_at": "2026-03-16T20:11:36+00:00",
-      "page": "/landing",
-      "props": { "section": "form" }
-    }
-  ]
-}
-```
+---
 
-Regras principais:
+## 📜 Logs e LGPD (Dev)
 
-- `events`: array obrigatório (`min:1`, `max:10`)
-- `events.*.type`: permitido por role (configurado em `config/analytics.php`)
-- Bloqueio de campos extras em `events.*` e `events.*.props` via schema
-- Rate limit: `throttle:tracking` (60/min por IP)
+* **Arquivo:** `storage/logs/laravel.log`
+* **Eventos:** `leads.demo_requested`, `tracking.batch_received`, `tracking.batch_persisted`.
+* **🔒 LGPD:** Data Masking / Hashing para PII nos logs. O banco de dados é a única fonte persistente.
 
-Referências:
+---
 
-- Middleware: `app/Http/Middleware/analytics/TrackingToken.php`
-- Request: `app/Http/Requests/Tracking/TrackBatchRequest.php`
-- Service: `app/Services/Analytics/V1/IngestBatchService.php`
-- Config: `config/analytics.php`
-- Rotas: `app/routes/api/v1.php`
+## 🛠 Troubleshooting
 
-### Outros
+1.  **Erro 500 em todas as rotas:**
+    Se usar `CACHE_STORE=database` e não tiver a tabela, o middleware de throttle quebra.
+    * **Solução:** `php artisan cache:table && php artisan migrate` ou use `CACHE_STORE=file`.
+2.  **Vite Manifest Not Found:**
+    * **Solução:** `npm run dev` ou `npm run build`.
+3.  **GD Library Missing:**
+    * **Solução:** Ativar `extension=gd` no seu `php.ini`.
 
-- **GET** `{{base_url}}/api/v1/landing/health` — healthcheck simples
-- **GET** `{{base_url}}/api/v1/analytics/overview` — endpoint **mock** (ideação)
-
-## Logs (dev)
-
-- Arquivo: `storage/logs/laravel.log`
-- Eventos úteis:
-  - `leads.demo_requested`
-  - `tracking.batch_received`
-  - `tracking.batch_persisted`
-
-LGPD:
-
-- Em produção, evite logar PII (e-mail/telefone/IP) em texto claro. Prefira hash/masking.
-
-## Troubleshooting
-
-### 500 em todas rotas de API (cache database)
-
-Se o `.env` tiver `CACHE_STORE=database` e não existir a tabela `cache`, o throttle vai quebrar e gerar 500.
-
-Soluções:
-
-- Criar a tabela: `php artisan cache:table && php artisan migrate`
-- Ou trocar temporariamente para `CACHE_STORE=file` (dev)
-
-### Vite manifest not found
-
-Se aparecer `ViteManifestNotFoundException`, rode:
-
-- `npm run dev` (gera `public/hot`) **ou**
-- `npm run build` (gera `public/build/manifest.json`)
-
-## Próximos passos (backlog)
-
-- Persistência real do tracking
-- Gestão de tokens (hash, rotação, revogação)
-- Substituir `GET /analytics/overview` mock por implementação real
-
-## Sobre o Laravel
-
-Framework base: Laravel (https://laravel.com).
+---
+**🚧 Projetado e Desenvolvido para RHdPeople**

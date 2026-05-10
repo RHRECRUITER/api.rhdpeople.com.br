@@ -4,8 +4,6 @@ namespace App\Domain\Analytics;
 
 enum EventType: string
 {
-    case SectionView = 'section_view';
-    case ScrollDepth = 'scroll_depth';
     case FormStart = 'form_start';
     case FormSubmitSuccess = 'form_submit_success';
     case PageView = 'page_view';
@@ -23,4 +21,3 @@ enum EventType: string
         );
     }
 }
-
