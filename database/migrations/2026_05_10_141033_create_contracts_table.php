@@ -1,0 +1,28 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::create('contracts', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->foreignUuid('tenant_id')->constrained('companies')->cascadeOnDelete();
+            $table->string('gateway_subscription_id')->nullable();
+            $table->string('gateway_customer_id')->nullable();
+            $table->date('start_date');
+            $table->date('expiration_date');
+            $table->enum('billing_cycle', ['monthly', 'annual']);
+            $table->boolean('auto_renew')->default(true);
+            $table->timestamps();
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('contracts');
+    }
+};

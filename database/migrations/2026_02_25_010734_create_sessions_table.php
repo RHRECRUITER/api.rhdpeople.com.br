@@ -10,7 +10,7 @@ return new class extends Migration
     {
         /**
          * Use este comando para quando for usar um banco diferente
-         * $this->connection = 'conn_rhdpeople_ladingpage';
+         * $this->connection = 'conn_rhdpeople_landingpage';
          */
     }
     /**
