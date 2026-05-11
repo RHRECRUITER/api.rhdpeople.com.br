@@ -11,7 +11,13 @@ class DatabaseSeeder extends Seeder
         $this->call([
             CompanySeeder::class,
             UserSeeder::class,
-            TrackingSeeder::class
+            TrackingSeeder::class,
+            PlanTierSeeder::class,
+            ModuleSeeder::class,
+            EmployeeRangeMultiplierSeeder::class,
+            AddOnSeeder::class,
+            PlanTierAddOnSeeder::class,
+            PlanTierModuleSeeder::class,
         ]);
     }
 }
