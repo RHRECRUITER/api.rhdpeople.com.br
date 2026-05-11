@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Repositories\Contracts\AddOnRepositoryInterface;
 use Illuminate\Support\ServiceProvider;
 
 // Importe as Interfaces e as Implementações
@@ -39,7 +40,12 @@ use \App\Repositories\Contracts\LicenseRepositoryInterface;
 use \App\Repositories\Eloquent\EloquentLicenseRepository;
 
 use \App\Repositories\Contracts\ContractRepositoryInterface;
+use App\Repositories\Contracts\ModuleRepositoryInterface;
+use App\Repositories\Contracts\PlanTierRepositoryInterface;
+use App\Repositories\Eloquent\EloquentAddOnRepository;
 use \App\Repositories\Eloquent\EloquentContractRepository;
+use App\Repositories\Eloquent\EloquentModuleRepository;
+use App\Repositories\Eloquent\EloquentPlanTierRepository;
 
 class RepositoryServiceProvider extends ServiceProvider
 {
@@ -104,16 +110,32 @@ class RepositoryServiceProvider extends ServiceProvider
         /**
          * PLAN
          */
-
+        $this->app->bind(
+            PlanTierRepositoryInterface::class,
+            EloquentPlanTierRepository::class
+        );
         $this->app->bind(
             PlanRepositoryInterface::class,
-            EloquentPlanRepository::class);
-        $this->app->bind(
-            LicenseRepositoryInterface::class,
-            EloquentLicenseRepository::class);
+            EloquentPlanRepository::class
+        );
         $this->app->bind(
             ContractRepositoryInterface::class,
-            EloquentContractRepository::class);
+            EloquentContractRepository::class
+        );
+        $this->app->bind(
+            LicenseRepositoryInterface::class,
+            EloquentLicenseRepository::class
+        );
+
+        $this->app->bind(
+            ModuleRepositoryInterface::class,
+            EloquentModuleRepository::class
+        );
+        $this->app->bind(
+            AddOnRepositoryInterface::class,
+            EloquentAddOnRepository::class
+        );
+
     }
 
     /**

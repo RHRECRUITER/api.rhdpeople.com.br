@@ -1,44 +1,121 @@
 <?php
-Namespace App\Repositories\Eloquent;
 
-use App\Repositories\Contracts\LicenseRepositoryInterface;
-use App\Repositories\Eloquent\EloquentTemplateRepository;
-use App\Models\License;
+namespace App\Repositories\Eloquent;
+
 use App\Enums\TypeLicense;
+use App\Models\License;
+use App\Repositories\Contracts\LicenseRepositoryInterface;
+use Illuminate\Support\Facades\Log;
 
-use App\Illuminate\Support\Collection;
-use Illuminate\Pagination\LengthAwarePaginator;
-
-class EloquentLicenseRepository extends EloquentTemplateRepository implements LicenseRepositoryInterface{
-    protected array $with = ['plan', 'user'];//Retorna as colunas da relação
-
-    public function __construct(License $model){
-        parent::__construct($model);
+class EloquentLicenseRepository implements LicenseRepositoryInterface
+{
+    public function all()
+    {
+        return License::all();
     }
-    public function getByType(TypeLicense|string $type) {
-        if(is_string($type)){
-            $type = TypeLicense::from($type);
-        }
-        return $this->model->with($this->with)
-            ->where('type_license',$type)
-            ->paginate(15);
+
+    public function findById(string $id)
+    {
+        return License::findOrFail($id);
     }
-    public function countByType(TypeLicense|string $type){
-        //Retorna a quantidade do tipo de licença solicitado
-        if(is_string($type)){
-            $type = TypeLicense::from($type);
-        }
-        return $this->model->with($this->with)
-            ->where('type_license',$type)
+
+    public function create(array $data)
+    {
+        return License::create($data);
+    }
+
+    public function update(string $id, array $data)
+    {
+        $license = License::findOrFail($id);
+        $license->update($data);
+        return $license;
+    }
+
+    public function delete(string $id)
+    {
+        $license = License::findOrFail($id);
+        $license->delete();
+    }
+
+    /**
+     * Retorna todas as licenças de um plano por tipo.
+     */
+    public function getByType(string $planId, string $type)
+    {
+        return License::where('plan_id', $planId)
+            ->where('type_license', $type)
+            ->get();
+    }
+
+    /**
+     * Conta licenças de um plano por tipo.
+     */
+    public function countByType(string $planId, string $type)
+    {
+        return License::where('plan_id', $planId)
+            ->where('type_license', $type)
             ->count();
     }
-    public function getAllUserByTypeLicense(TypeLicense|string $type){
-       //Retorna os usuarios que tenham o tipo de licença solicitado
-       if(is_string($type)){
-            $type = TypeLicense::from($type);
-       }
-       return $this->mode->where('type_license',$type)->pluck('user_id');
+
+    /**
+     * Retorna todos os usuários com um tipo de licença específico.
+     */
+    public function getAllUsersByTypeLicense(string $planId, string $type)
+    {
+        return License::where('plan_id', $planId)
+            ->where('type_license', $type)
+            ->where('is_active', true)
+            ->with('user')
+            ->get()
+            ->pluck('user');
+    }
+
+    /**
+     * Conta licenças ativas de um plano.
+     */
+    public function countActiveByPlan(string $planId)
+    {
+        return License::where('plan_id', $planId)
+            ->where('is_active', true)
+            ->count();
+    }
+
+    /**
+     * Retorna a licença do dono de um plano.
+     */
+    public function getDonoByPlan(string $planId)
+    {
+        return License::where('plan_id', $planId)
+            ->where('type_license', TypeLicense::DONO)
+            ->with('user')
+            ->firstOrFail();
+    }
+
+    /**
+     * Desativa uma licença — não permitido para licenças do tipo dono.
+     */
+    public function deactivate(string $id)
+    {
+        $license = License::findOrFail($id);
+
+        if ($license->isDono()) {
+            Log::warning("Tentativa de desativar licença do dono bloqueada.", [
+                'license_id' => $id,
+            ]);
+            return $license;
+        }
+
+        $license->update(['is_active' => false]);
+        return $license;
+    }
+
+    /**
+     * Ativa uma licença.
+     */
+    public function activate(string $id)
+    {
+        $license = License::findOrFail($id);
+        $license->update(['is_active' => true]);
+        return $license;
     }
 }
-
-?>

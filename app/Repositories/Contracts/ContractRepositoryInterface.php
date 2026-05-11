@@ -2,11 +2,26 @@
 
 namespace App\Repositories\Contracts;
 
-use App\Models\Contract;
-Use App\Repositories\Contracts\TemplateRepositoryInterface;
+interface ContractRepositoryInterface
+{
+    public function all();
+    public function findById(string $id);
+    public function create(array $data);
+    public function update(string $id, array $data);
+    public function delete(string $id);
 
-interface ContractRepositoryInterface extends TemplateRepositoryInterface{
-    public function filterAllExpiredContract();
+    /**
+     * Retorna todos os contratos vencidos.
+     */
+    public function filterAllExpired();
+
+    /**
+     * Retorna contratos filtrando pelo ciclo de cobrança.
+     */
+    public function filterByBillingCycle(string $billingCycle);
+
+    /**
+     * Retorna contratos que vencem nos próximos N dias.
+     */
+    public function getDueSoon(int $days = 30);
 }
-
-?>
