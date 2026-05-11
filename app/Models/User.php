@@ -9,7 +9,6 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
-use App\Enums\StatusUser;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
@@ -35,8 +34,6 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
         'type' => 'string',
-        //'status' => 'string',
-        'status' => StatusUser::class,
     ];
 
     // Relacionamento com Company (Tenant)
@@ -73,13 +70,6 @@ class User extends Authenticatable
         return $this->type === 'company_user';
     }
 
-    /**
-     * Helper de Verificação de Status
-     */
-    public function isActive(): bool
-    {
-        return $this->status === 'active';
-    }
 }
 
 
