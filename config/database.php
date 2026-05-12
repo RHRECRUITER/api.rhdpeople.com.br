@@ -31,8 +31,6 @@ return [
 
     'connections' => [
 
-
-
         'conn_rhdpeople_geral' => [
             'driver' => 'mysql',
             'url' => env('DB_URL'),
@@ -73,8 +71,7 @@ return [
             ]) : [],
         ],
 
-
-/*
+        /*
         'sqlite' => [
             'driver' => 'sqlite',
             'url' => env('DB_URL'),

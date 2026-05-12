@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -22,8 +22,8 @@ class EmployeeRangeMultiplier extends Model
     ];
 
     protected $casts = [
-        'min_employees'    => 'integer',
-        'max_employees'    => 'integer',
+        'min_employees' => 'integer',
+        'max_employees' => 'integer',
         'price_multiplier' => 'decimal:2',
     ];
 
@@ -41,12 +41,9 @@ class EmployeeRangeMultiplier extends Model
 
     // ─── Helpers ──────────────────────────────────────────────────
 
-     /**
-      * Verifica se um número de colaboradores se encaixa nesta faixa.
-      *
-      * @param integer $count
-      * @return boolean
-      */
+    /**
+     * Verifica se um número de colaboradores se encaixa nesta faixa.
+     */
     public function containsCount(int $count): bool
     {
         if ($this->max_employees === null) {
@@ -56,12 +53,9 @@ class EmployeeRangeMultiplier extends Model
         return $count >= $this->min_employees && $count <= $this->max_employees;
     }
 
-     /**
-      * Calcula o preço final aplicando o multiplicador ao preço base do tier.
-      *
-      * @param float $basePrice
-      * @return float
-      */
+    /**
+     * Calcula o preço final aplicando o multiplicador ao preço base do tier.
+     */
     public function applyTo(float $basePrice): float
     {
         return round($basePrice * $this->price_multiplier, 2);

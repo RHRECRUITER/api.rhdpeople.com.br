@@ -26,6 +26,7 @@ class EloquentPlanRepository implements PlanRepositoryInterface
     {
         $plan = Plan::findOrFail($id);
         $plan->update($data);
+
         return $plan;
     }
 

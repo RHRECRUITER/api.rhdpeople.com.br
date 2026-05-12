@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Middleware\Security\v1;
 
 use Closure;
@@ -12,6 +13,7 @@ use Illuminate\Support\Facades\Response;
  * e validar a existência, validade e integridade de um Token de Contexto.
  * * Este componente garante operações de uso único e previne
  * ataques de Cross-Site Request Forgery (CSRF) e Bypass de Captcha.
+ *
  * @author Luan Quevedo
  */
 class CheeckCaptchaToken
@@ -23,9 +25,10 @@ class CheeckCaptchaToken
      * 2. Atomicidade (Pull): Recupera o token do Cache e o remove instantaneamente.
      * 3. Validação de Contexto: Garante que o token gerado é para a rota correta.
      * 4. Validação de Sessão: Verifica se o proprietário do token é o mesmo da sessão atual.
+     *
      * * @param Request $request Requisição HTTP recebida.
-     * @param Closure $next Próximo fechamento no pipeline do pipeline.
-     * @param string $requiredContext A finalidade exigida para a rota.
+     * @param  Closure  $next  Próximo fechamento no pipeline do pipeline.
+     * @param  string  $requiredContext  A finalidade exigida para a rota.
      * @return mixed Resposta da API em caso de erro (403) ou prosseguimento da requisição.
      */
     public function handle(Request $request, Closure $next, string $requiredContext)
@@ -46,6 +49,7 @@ class CheeckCaptchaToken
         if ($storedData['session_id'] !== session()->getId()) {
             return Response::api(null, 'Sessão inválida', 403);
         }
+
         return $next($request);
     }
 }

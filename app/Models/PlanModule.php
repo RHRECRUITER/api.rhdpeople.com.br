@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class PlanModule extends Model
@@ -20,7 +20,7 @@ class PlanModule extends Model
     ];
 
     protected $casts = [
-        'is_included'   => 'boolean',
+        'is_included' => 'boolean',
         'price_charged' => 'decimal:2',
     ];
 
@@ -40,8 +40,6 @@ class PlanModule extends Model
 
     /**
      * Verifica se o módulo foi incluso sem custo neste plano.
-     *
-     * @return boolean
      */
     public function isIncluded(): bool
     {
@@ -50,8 +48,6 @@ class PlanModule extends Model
 
     /**
      * Verifica se o módulo foi contratado como extra pago.
-     *
-     * @return boolean
      */
     public function isPaid(): bool
     {

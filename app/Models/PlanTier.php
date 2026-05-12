@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class PlanTier extends Model
@@ -23,11 +23,11 @@ class PlanTier extends Model
     ];
 
     protected $casts = [
-        'base_price'           => 'decimal:2',
-        'annual_discount_pct'  => 'decimal:2',
-        'max_employees'        => 'integer',
-        'is_custom_pricing'    => 'boolean',
-        'is_active'            => 'boolean',
+        'base_price' => 'decimal:2',
+        'annual_discount_pct' => 'decimal:2',
+        'max_employees' => 'integer',
+        'is_custom_pricing' => 'boolean',
+        'is_active' => 'boolean',
     ];
 
     // ─── Relationships ────────────────────────────────────────────
@@ -54,11 +54,9 @@ class PlanTier extends Model
 
     // ─── Helpers ──────────────────────────────────────────────────
 
-     /**
-      * Retorna o preço com desconto anual aplicado (valor mensal equivalente).
-      *
-      * @return float
-      */
+    /**
+     * Retorna o preço com desconto anual aplicado (valor mensal equivalente).
+     */
     public function annualMonthlyPrice(): float
     {
         return round(
@@ -69,9 +67,6 @@ class PlanTier extends Model
 
     /**
      * Verifica se o plano aceita um número de colaboradores.
-     *
-     * @param integer $count
-     * @return boolean
      */
     public function acceptsEmployeeCount(int $count): bool
     {

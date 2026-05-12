@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class PlanAddOn extends Model
@@ -38,11 +38,9 @@ class PlanAddOn extends Model
 
     /**
      * Retorna o preço formatado para exibição.
-     *
-     * @return string
      */
     public function displayPrice(): string
     {
-        return '+R$ ' . number_format($this->price_charged, 2, ',', '.');
+        return '+R$ '.number_format($this->price_charged, 2, ',', '.');
     }
 }

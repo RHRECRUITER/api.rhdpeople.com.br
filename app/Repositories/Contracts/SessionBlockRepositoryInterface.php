@@ -2,7 +2,7 @@
 
 namespace App\Repositories\Contracts;
 
-interface SessionBlockRepositoryInterface 
+interface SessionBlockRepositoryInterface
 {
     /**
      * Cria ou atualiza o bloco de sessão baseado nos dados de tracking.

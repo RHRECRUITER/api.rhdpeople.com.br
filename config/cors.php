@@ -19,7 +19,7 @@ return [
 
     'allowed_methods' => ['*'],
 
-    //Apontado para variavel de ambiente onde ficara informado o url do frontend ou localhost para dev.
+    // Apontado para variavel de ambiente onde ficara informado o url do frontend ou localhost para dev.
     'allowed_origins' => explode(',', env('CORS_ALLOWED_ORIGINS', env('FRONTEND_URL', 'http://localhost:3000'))),
 
     'allowed_origins_patterns' => [],

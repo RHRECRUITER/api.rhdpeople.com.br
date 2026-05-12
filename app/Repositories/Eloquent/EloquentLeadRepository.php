@@ -9,18 +9,18 @@ class EloquentLeadRepository implements LeadRepositoryInterface
 {
     public function __construct(
         protected Lead $model
-    ){}
+    ) {}
 
     public function updateOrCreateLead(string $sessionId, array $data)
     {
         return $this->model->updateOrCreate(
             ['session_id' => $sessionId],
             [
-                'name'              => $data['name'] ?? null,
-                'email'             => $data['email'] ?? null,
-                'phone'             => $data['phone'] ?? null,
+                'name' => $data['name'] ?? null,
+                'email' => $data['email'] ?? null,
+                'phone' => $data['phone'] ?? null,
                 'last_field_filled' => $data['last_field_filled'] ?? null,
-                'status'            => $data['status'] ?? 'draft'
+                'status' => $data['status'] ?? 'draft',
             ]
         );
     }
@@ -28,8 +28,8 @@ class EloquentLeadRepository implements LeadRepositoryInterface
     public function markAsConverted(string $sessionId, array $finalData = [])
     {
         return $this->model->where('session_id', $sessionId)->update(array_merge($finalData, [
-            'status'       => 'converted',
-            'converted_at' => now()
+            'status' => 'converted',
+            'converted_at' => now(),
         ]));
     }
 

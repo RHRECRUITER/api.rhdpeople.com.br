@@ -9,19 +9,19 @@ class EloquentSessionBlockRepository implements SessionBlockRepositoryInterface
 {
     public function __construct(
         protected SessionBlock $model
-    ){}
+    ) {}
 
     public function updateOrCreateFromTracking(string $sessionId, array $data)
     {
         return $this->model->updateOrCreate(
             ['session_id' => $sessionId],
             [
-                'tenant_id'        => $data['tenant_id'],
-                'started_at'       => $data['started_at'],
-                'ended_at'         => $data['ended_at'] ?? now(),
+                'tenant_id' => $data['tenant_id'],
+                'started_at' => $data['started_at'],
+                'ended_at' => $data['ended_at'] ?? now(),
                 'duration_seconds' => $data['duration_seconds'] ?? 0,
-                'landing_page'     => $data['landing_page'] ?? null,
-                'exit_page'        => $data['exit_page'] ?? null,
+                'landing_page' => $data['landing_page'] ?? null,
+                'exit_page' => $data['exit_page'] ?? null,
             ]
         );
     }

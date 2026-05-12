@@ -26,6 +26,7 @@ class EloquentModuleRepository implements ModuleRepositoryInterface
     {
         $module = Module::findOrFail($id);
         $module->update($data);
+
         return $module;
     }
 
@@ -50,8 +51,8 @@ class EloquentModuleRepository implements ModuleRepositoryInterface
     {
         return Module::whereHas('tierModules', function ($query) use ($planTierId) {
             $query->where('plan_tier_id', $planTierId)
-                  ->where('is_included', true)
-                  ->where('is_available', true);
+                ->where('is_included', true)
+                ->where('is_available', true);
         })->get();
     }
 
@@ -62,7 +63,7 @@ class EloquentModuleRepository implements ModuleRepositoryInterface
     {
         return Module::whereHas('tierModules', function ($query) use ($planTierId) {
             $query->where('plan_tier_id', $planTierId)
-                  ->where('is_available', true);
+                ->where('is_available', true);
         })->get();
     }
 }

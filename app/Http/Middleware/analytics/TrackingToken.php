@@ -13,8 +13,8 @@ class TrackingToken
     {
         $token = (string) $request->header('X-Tracking-Token', '');
         $requireToken = (bool) config('analytics.tracking.require_token', false);
-        $defaultRole  = (string) config('analytics.tracking.default_role', 'public');
-        $tokens       = (array) config('analytics.tracking.tokens', []);
+        $defaultRole = (string) config('analytics.tracking.default_role', 'public');
+        $tokens = (array) config('analytics.tracking.tokens', []);
 
         if ($token === '') {
             if ($requireToken) {

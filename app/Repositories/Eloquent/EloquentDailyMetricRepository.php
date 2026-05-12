@@ -9,20 +9,20 @@ class EloquentDailyMetricRepository implements DailyMetricRepositoryInterface
 {
     public function __construct(
         protected DailyMetric $model
-    ){}
+    ) {}
 
     public function updateOrCreateMetrics(array $data)
     {
         return $this->model->updateOrCreate(
             [
-                'date'      => $data['date'],
-                'page_path' => $data['page_path']
+                'date' => $data['date'],
+                'page_path' => $data['page_path'],
             ],
             [
-                'total_views'       => $data['total_views'] ?? 0,
-                'total_sessions'    => $data['total_sessions'] ?? 0,
+                'total_views' => $data['total_views'] ?? 0,
+                'total_sessions' => $data['total_sessions'] ?? 0,
                 'total_conversions' => $data['total_conversions'] ?? 0,
-                'bounce_rate'       => $data['bounce_rate'] ?? 0,
+                'bounce_rate' => $data['bounce_rate'] ?? 0,
             ]
         );
     }

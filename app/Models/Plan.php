@@ -4,14 +4,14 @@ namespace App\Models;
 
 use App\Enums\SubscriptionInterval;
 use App\Traits\BelongsToTenant;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Plan extends Model
 {
-    use HasUuids, BelongsToTenant;
+    use BelongsToTenant, HasUuids;
 
     protected $table = 'plans';
 
@@ -32,14 +32,14 @@ class Plan extends Model
     ];
 
     protected $casts = [
-        'billing_cycle'         => SubscriptionInterval::class,
-        'price_base'            => 'decimal:2',
+        'billing_cycle' => SubscriptionInterval::class,
+        'price_base' => 'decimal:2',
         'price_with_multiplier' => 'decimal:2',
-        'price_modules'         => 'decimal:2',
-        'price_add_ons'         => 'decimal:2',
-        'price_subtotal'        => 'decimal:2',
-        'price_discount'        => 'decimal:2',
-        'price_total'           => 'decimal:2',
+        'price_modules' => 'decimal:2',
+        'price_add_ons' => 'decimal:2',
+        'price_subtotal' => 'decimal:2',
+        'price_discount' => 'decimal:2',
+        'price_total' => 'decimal:2',
     ];
 
     // ─── Relationships ────────────────────────────────────────────
@@ -83,8 +83,6 @@ class Plan extends Model
 
     /**
      * Verifica se o plano está ativo.
-     *
-     * @return boolean
      */
     public function isActive(): bool
     {
@@ -93,8 +91,6 @@ class Plan extends Model
 
     /**
      * Verifica se o plano está em trial.
-     *
-     * @return boolean
      */
     public function isTrial(): bool
     {
@@ -103,8 +99,6 @@ class Plan extends Model
 
     /**
      * Verifica se o plano está suspenso.
-     *
-     * @return boolean
      */
     public function isSuspended(): bool
     {
@@ -113,8 +107,6 @@ class Plan extends Model
 
     /**
      * Verifica se o plano está cancelado.
-     *
-     * @return boolean
      */
     public function isCancelled(): bool
     {
@@ -123,8 +115,6 @@ class Plan extends Model
 
     /**
      * Retorna o total de licenças ativas no plano.
-     *
-     * @return integer
      */
     public function activeLicensesCount(): int
     {
@@ -133,8 +123,6 @@ class Plan extends Model
 
     /**
      * Verifica se o plano ainda tem vagas disponíveis.
-     *
-     * @return boolean
      */
     public function hasAvailableSlots(): bool
     {
@@ -151,8 +139,6 @@ class Plan extends Model
 
     /**
      * Retorna quantas vagas ainda estão disponíveis.
-     *
-     * @return integer|null
      */
     public function availableSlots(): ?int
     {

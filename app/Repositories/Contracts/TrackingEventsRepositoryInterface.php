@@ -23,7 +23,6 @@ interface TrackingEventsRepositoryInterface
      * Verifica se houve algum evento de 'form_submit_success' em uma sessão específica.
      * Isso alimentará o campo 'is_converted' na session_blocks e o status no Lead.
      */
-
     public function checkConversion(string $sessionId): bool;
 
     // --- Lógica de BI (daily_metrics) ---

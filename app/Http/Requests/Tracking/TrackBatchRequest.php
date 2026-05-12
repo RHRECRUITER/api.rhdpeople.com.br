@@ -1,8 +1,10 @@
 <?php
+
 namespace App\Http\Requests\Tracking;
 
 use App\Domain\Analytics\EventSchema;
 use App\Domain\Analytics\EventType;
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Validator;
@@ -19,15 +21,14 @@ class TrackBatchRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true; //Perimitir acesso  sem autenticação, ate que seja definida a estrategia de autenticação.
+        return true; // Perimitir acesso  sem autenticação, ate que seja definida a estrategia de autenticação.
     }
 
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array<mixed>|string>
      */
-
     public function withValidator(Validator $validator): void
     {
         $validator->after(function (Validator $validator) {
@@ -85,25 +86,26 @@ class TrackBatchRequest extends FormRequest
             }
         });
     }
+
     public function rules(): array
     {
-        $role            = (string) $this->attributes->get('tracking_role', 'public');
+        $role = (string) $this->attributes->get('tracking_role', 'public');
         $configuredTypes = (array) config("analytics.tracking.roles.$role.event_types", EventType::values());
-        $allowedTypes    = array_values(array_intersect($configuredTypes, EventType::values()));
+        $allowedTypes = array_values(array_intersect($configuredTypes, EventType::values()));
 
         return [
             // Regras de validação para o payload do batch de tracking.
-            'client_id'            => ['required', 'uuid'],
-            'session_id'           => ['required', 'uuid'],
-            'events'               => ['required', 'array', 'min:1', 'max:10'],
-            //Regras para cada evento dentro do array de eventos.
-            'events.*.event_id'    => ['required', 'uuid'],
-            'events.*.type'        => ['required', 'string', Rule::in($allowedTypes)],
+            'client_id' => ['required', 'uuid'],
+            'session_id' => ['required', 'uuid'],
+            'events' => ['required', 'array', 'min:1', 'max:10'],
+            // Regras para cada evento dentro do array de eventos.
+            'events.*.event_id' => ['required', 'uuid'],
+            'events.*.type' => ['required', 'string', Rule::in($allowedTypes)],
             'events.*.occurred_at' => ['required', 'date_format:Y-m-d\TH:i:sP'], // ISO 8601
-            'events.*.page'        => ['required', 'string', 'max:255'],
+            'events.*.page' => ['required', 'string', 'max:255'],
             // Propriedades adicionais do evento, como props do form ou outras informações.
-            'events.*.props'       => ['sometimes', 'array', 'max:10'],
-            'events.*.props.*'     => ['nullable', 'string', 'max:255'],
+            'events.*.props' => ['sometimes', 'array', 'max:10'],
+            'events.*.props.*' => ['nullable', 'string', 'max:255'],
         ];
     }
 }

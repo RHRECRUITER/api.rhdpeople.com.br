@@ -2,13 +2,13 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
-use App\Models\Tracking\SessionBlock;
-use App\Models\Tracking\Event;
 use App\Models\Tracking\DailyMetric;
+use App\Models\Tracking\Event;
 use App\Models\Tracking\Lead;
-use Illuminate\Support\Str;
+use App\Models\Tracking\SessionBlock;
 use Carbon\Carbon;
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Str;
 
 class TrackingSeeder extends Seeder
 {
@@ -16,16 +16,16 @@ class TrackingSeeder extends Seeder
     {
         $pages = ['/home', '/precos', '/sobre', '/contacto', '/vagas/dev-backend'];
         $eventTypes = ['page_view', 'heartbeat', 'form_start', 'restricted_click'];
-        
+
         // Vamos gerar dados para os últimos 7 dias
         for ($i = 6; $i >= 0; $i--) {
             $date = Carbon::today()->subDays($i);
-            
+
             // Simular 20 sessões por dia
             for ($s = 0; $s < 20; $s++) {
                 // Criamos o bloco primeiro para pegar o ID dele
                 $startTime = $date->copy()->addHours(rand(8, 22))->addMinutes(rand(0, 59));
-                $isConverted = (rand(1, 10) > 8); 
+                $isConverted = (rand(1, 10) > 8);
 
                 $block = SessionBlock::create([
                     'id' => (string) Str::uuid(),
@@ -55,9 +55,9 @@ class TrackingSeeder extends Seeder
                     Lead::create([
                         'id' => (string) Str::uuid(),
                         'session_id' => $block->session_id, // Link para comportamento na LP
-                        'name' => 'Lead de Teste ' . Str::random(5),
-                        'email' => 'lead' . Str::random(5) . '@exemplo.com',
-                        'phone' => '91' . rand(1000000, 9999999),
+                        'name' => 'Lead de Teste '.Str::random(5),
+                        'email' => 'lead'.Str::random(5).'@exemplo.com',
+                        'phone' => '91'.rand(1000000, 9999999),
                         'status' => 'converted',
                         'converted_at' => $startTime->copy()->addMinutes(2),
                     ]);

@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class PlanTierModule extends Model
@@ -20,7 +20,7 @@ class PlanTierModule extends Model
     ];
 
     protected $casts = [
-        'is_included'  => 'boolean',
+        'is_included' => 'boolean',
         'is_available' => 'boolean',
     ];
 
@@ -40,8 +40,6 @@ class PlanTierModule extends Model
 
     /**
      * Verifica se o módulo está incluso neste tier (sem custo extra).
-     *
-     * @return boolean
      */
     public function isIncluded(): bool
     {
@@ -50,8 +48,6 @@ class PlanTierModule extends Model
 
     /**
      * Verifica se o módulo está disponível para contratação neste tier.
-     *
-     * @return boolean
      */
     public function isAvailable(): bool
     {

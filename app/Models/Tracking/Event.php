@@ -2,36 +2,38 @@
 
 namespace App\Models\Tracking;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use App\Models\Company;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Model;
 
 class Event extends Model
 {
     use HasUuids;
+
     protected $connection = 'conn_rhdpeople_landingpage';
 
     protected $table = 'tracking_events';
-    
-    public $timestamps = false; 
-    
+
+    public $timestamps = false;
+
     public $incrementing = false;
+
     protected $keyType = 'string';
 
     protected $fillable = [
         'id',
         'session_id',
-        'tenant_id', 
-        'user_id',   
+        'tenant_id',
+        'user_id',
         'event_type',
         'url',
-        'payload'
+        'payload',
     ];
 
     protected $casts = [
         'payload' => 'array',
-        'created_at' => 'datetime'
+        'created_at' => 'datetime',
     ];
 
     /**

@@ -4,14 +4,14 @@ namespace App\Models;
 
 use App\Enums\SubscriptionInterval;
 use App\Traits\BelongsToTenant;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Contract extends Model
 {
-    use HasUuids, BelongsToTenant;
+    use BelongsToTenant, HasUuids;
 
     protected $table = 'contracts';
 
@@ -26,10 +26,10 @@ class Contract extends Model
     ];
 
     protected $casts = [
-        'start_date'      => 'date',
+        'start_date' => 'date',
         'expiration_date' => 'date',
-        'billing_cycle'   => SubscriptionInterval::class,
-        'auto_renew'      => 'boolean',
+        'billing_cycle' => SubscriptionInterval::class,
+        'auto_renew' => 'boolean',
     ];
 
     // ─── Relationships ────────────────────────────────────────────
@@ -48,8 +48,6 @@ class Contract extends Model
 
     /**
      * Verifica se o contrato está vencido.
-     *
-     * @return boolean
      */
     public function isExpired(): bool
     {
@@ -58,9 +56,6 @@ class Contract extends Model
 
     /**
      * Verifica se o contrato vence nos próximos N dias.
-     *
-     * @param integer $days
-     * @return boolean
      */
     public function isDueSoon(int $days = 30): bool
     {
@@ -69,8 +64,6 @@ class Contract extends Model
 
     /**
      * Verifica se o contrato está ativo (não vencido).
-     *
-     * @return boolean
      */
     public function isActive(): bool
     {

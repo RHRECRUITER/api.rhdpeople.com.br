@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class PlanTierAddOn extends Model
@@ -38,8 +38,6 @@ class PlanTierAddOn extends Model
 
     /**
      * Verifica se o add-on está disponível para contratação neste tier.
-     *
-     * @return boolean
      */
     public function isAvailable(): bool
     {

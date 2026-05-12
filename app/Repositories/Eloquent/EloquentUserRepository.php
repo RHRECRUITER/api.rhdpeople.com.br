@@ -33,6 +33,7 @@ class EloquentUserRepository implements UserRepositoryInterface
     {
         $user = $this->findById($id);
         $user->update($data);
+
         return $user;
     }
 
@@ -45,8 +46,10 @@ class EloquentUserRepository implements UserRepositoryInterface
     {
         return $this->model->where('tenant_id', $tenantId)->get();
     }
-    public function searchUserInactive(){
-        //Filtra usuarios que estejam inativos
-        return $this->$model->where('status',StatusUser:INACTIVE)->get();
+
+    public function searchUserInactive()
+    {
+        // Filtra usuarios que estejam inativos
+        return $this->$model->where('status', StatusUser: INACTIVE)->get();
     }
 }

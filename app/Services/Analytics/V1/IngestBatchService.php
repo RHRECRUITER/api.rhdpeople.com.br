@@ -1,9 +1,10 @@
 <?php
+
 namespace App\Services\Analytics\V1;
 
 use App\Domain\Analytics\EventSchema;
-use App\Repositories\Contracts\TrackingEventsRepositoryInterface;
 use App\Repositories\Contracts\SessionBlockRepositoryInterface;
+use App\Repositories\Contracts\TrackingEventsRepositoryInterface;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
@@ -18,17 +19,18 @@ class IngestBatchService
         private TrackingEventsRepositoryInterface $trackingRepo,
         private SessionBlockRepositoryInterface $sessionBlockRepo
     ) {}
+
     public function ingest(array $payload): array
     {
-        $events   = $payload['events'] ?? [];
+        $events = $payload['events'] ?? [];
         $accepted = count($events);
 
         $traceId = (string) Str::uuid();
-        $role    = (string) config('analytics.tracking.default_role', 'public');
+        $role = (string) config('analytics.tracking.default_role', 'public');
         $invalid = 0;
 
-        $seenInBatch       = [];
-        $uniqueEvents      = [];
+        $seenInBatch = [];
+        $uniqueEvents = [];
         $duplicatesInBatch = 0;
 
         foreach ($events as $event) {
@@ -37,12 +39,13 @@ class IngestBatchService
             // Se o event_id ja foi visto nesse batch, ele é contabilizado como duplicado e ignorado para inserção.
             if (isset($seenInBatch[$eventId])) {
                 $duplicatesInBatch++;
+
                 continue;
             }
 
             $seenInBatch[$eventId] = true;
 
-            $type  = $event['type'] ?? null;
+            $type = $event['type'] ?? null;
             $props = $event['props'] ?? [];
 
             if (! is_array($props)) {
@@ -51,7 +54,7 @@ class IngestBatchService
 
             } else {
                 $allowedKeys = EventSchema::allowedPropsForType($type);
-                $filtered    = array_intersect_key($props, array_flip($allowedKeys));
+                $filtered = array_intersect_key($props, array_flip($allowedKeys));
 
                 foreach ($filtered as $key => $value) {
                     if (! is_string($value)) {
@@ -68,10 +71,10 @@ class IngestBatchService
                 $event['props'] = $filtered;
             }
 
-            //injeta os dados da raiz do payload no banco
+            // injeta os dados da raiz do payload no banco
             $event['session_id'] = $payload['session_id'] ?? null;
-            $event['tenant_id']  = $payload['client_id'] ?? null;
-            $event['user_id']    = auth('sanctum')->id();
+            $event['tenant_id'] = $payload['client_id'] ?? null;
+            $event['user_id'] = auth('sanctum')->id();
 
             $uniqueEvents[] = $event;
 
@@ -79,7 +82,7 @@ class IngestBatchService
         // Atualiza a contagem de eventos validos após limpeza de duplicados e validação de props.
         $events = $uniqueEvents;
 
-        $unique     = count($events);
+        $unique = count($events);
         $typeCounts = [];
         foreach ($events as $event) {
             $type = $event['type'] ?? null;
@@ -92,18 +95,18 @@ class IngestBatchService
 
         // Loga o recebimento do batch para debug e monitoramento.
         Log::info('tracking.batch_received', [
-            'trace_id'            => $traceId,
-            'role'                => $role,
-            'client_id'           => $payload['client_id'] ?? null,
-            'session_id'          => $payload['session_id'] ?? null,
-            'accepted'            => $accepted,
-            'unique'              => $unique,
-            'invalid'             => $invalid,
+            'trace_id' => $traceId,
+            'role' => $role,
+            'client_id' => $payload['client_id'] ?? null,
+            'session_id' => $payload['session_id'] ?? null,
+            'accepted' => $accepted,
+            'unique' => $unique,
+            'invalid' => $invalid,
             'duplicates_in_batch' => $duplicatesInBatch,
-            'event_type_counts'   => $typeCounts,
+            'event_type_counts' => $typeCounts,
         ]);
 
-        $result          = $this->trackingRepo->insertIgnoringDuplicates($events);
+        $result = $this->trackingRepo->insertIgnoringDuplicates($events);
         $duplicatesTotal = $duplicatesInBatch + $result['duplicates'];
 
         if (! empty($payload['session_id'])) {
@@ -115,20 +118,20 @@ class IngestBatchService
         }
 
         Log::info('tracking.batch_persisted', [
-            'trace_id'            => $traceId,
-            'role'                => $role,
-            'inserted'            => $result['inserted'],
-            'duplicates'          => $duplicatesTotal,
-            'duplicates_in_db'    => $result['duplicates'],
+            'trace_id' => $traceId,
+            'role' => $role,
+            'inserted' => $result['inserted'],
+            'duplicates' => $duplicatesTotal,
+            'duplicates_in_db' => $result['duplicates'],
             'duplicates_in_batch' => $duplicatesInBatch,
         ]);
 
         return [
-            'trace_id'   => $traceId,
-            'accepted'   => $accepted,
-            'inserted'   => $result['inserted'],
+            'trace_id' => $traceId,
+            'accepted' => $accepted,
+            'inserted' => $result['inserted'],
             'duplicates' => $duplicatesTotal,
-            'invalid'    => $invalid,
+            'invalid' => $invalid,
         ];
     }
 }

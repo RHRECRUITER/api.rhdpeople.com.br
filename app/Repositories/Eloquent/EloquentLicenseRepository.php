@@ -28,6 +28,7 @@ class EloquentLicenseRepository implements LicenseRepositoryInterface
     {
         $license = License::findOrFail($id);
         $license->update($data);
+
         return $license;
     }
 
@@ -99,13 +100,15 @@ class EloquentLicenseRepository implements LicenseRepositoryInterface
         $license = License::findOrFail($id);
 
         if ($license->isDono()) {
-            Log::warning("Tentativa de desativar licença do dono bloqueada.", [
+            Log::warning('Tentativa de desativar licença do dono bloqueada.', [
                 'license_id' => $id,
             ]);
+
             return $license;
         }
 
         $license->update(['is_active' => false]);
+
         return $license;
     }
 
@@ -116,6 +119,7 @@ class EloquentLicenseRepository implements LicenseRepositoryInterface
     {
         $license = License::findOrFail($id);
         $license->update(['is_active' => true]);
+
         return $license;
     }
 }

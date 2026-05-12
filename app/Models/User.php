@@ -2,18 +2,17 @@
 
 namespace App\Models;
 
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable, HasUuids;
+    use HasApiTokens, HasFactory, HasUuids, Notifiable;
 
     protected $fillable = [
         'tenant_id',
@@ -42,11 +41,11 @@ class User extends Authenticatable
         return $this->belongsTo(Company::class, 'tenant_id');
     }
 
-    //Relacionamento com License
-    public function license(): HasOne{
+    // Relacionamento com License
+    public function license(): HasOne
+    {
         return $this->HasOne(License::class);
     }
-
 
     // Helpers de Nível de Acesso
     public function isSuperAdmin(): bool
@@ -64,12 +63,8 @@ class User extends Authenticatable
         return $this->type === 'company_admin';
     }
 
-
     public function isCompanyUser(): bool
     {
         return $this->type === 'company_user';
     }
-
 }
-
-

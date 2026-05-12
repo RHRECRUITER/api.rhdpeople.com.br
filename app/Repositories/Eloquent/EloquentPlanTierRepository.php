@@ -26,6 +26,7 @@ class EloquentPlanTierRepository implements PlanTierRepositoryInterface
     {
         $tier = PlanTier::findOrFail($id);
         $tier->update($data);
+
         return $tier;
     }
 
@@ -48,7 +49,6 @@ class EloquentPlanTierRepository implements PlanTierRepositoryInterface
     /**
      * Retorna o tier com seus módulos e add-ons para montar o card.
      *
-     * @param string $id
      * @return void
      */
     public function getWithModulesAndAddOns(string $id)

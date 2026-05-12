@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\Security\v1\CheeckCaptchaToken;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Application;
@@ -7,6 +8,7 @@ use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
+use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -33,25 +35,25 @@ use Symfony\Component\HttpKernel\Exception\UnsupportedMediaTypeHttpException;
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
 
-        api: __DIR__ . "/../app/routes/api.php",
-        web: __DIR__ . '/../app/routes/web.php',
-        commands: __DIR__ . '/../app/routes/console.php',
+        api: __DIR__.'/../app/routes/api.php',
+        web: __DIR__.'/../app/routes/web.php',
+        commands: __DIR__.'/../app/routes/console.php',
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->alias([
-            'captcha.check' => \App\Http\Middleware\Security\v1\CheeckCaptchaToken::class,
+            'captcha.check' => CheeckCaptchaToken::class,
         ]);
     })
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->api(prepend: [
-            \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
+            EnsureFrontendRequestsAreStateful::class,
         ]);
         $middleware->throttleApi('api');
     })
     ->withExceptions(function (Exceptions $exceptions) {
         // Consideramos API qualquer request que comece com "/api/".
-        $isApi = fn(Request $request) => $request->is('api/*');
+        $isApi = fn (Request $request) => $request->is('api/*');
 
         // Helper para montar a resposta de erro com o contrato padrão.
         $apiError = function (
@@ -62,8 +64,8 @@ return Application::configure(basePath: dirname(__DIR__))
             return response()->json([
                 'success' => false,
                 'message' => $message,
-                'data'    => null,
-                'meta'    => ['timestamp' => now()->toIso8601String()],
+                'data' => null,
+                'meta' => ['timestamp' => now()->toIso8601String()],
             ] + $extra, $status);
         };
 
@@ -156,9 +158,9 @@ return Application::configure(basePath: dirname(__DIR__))
 
             return $apiError(429, 'Too many requests', [
                 'meta' => array_filter([
-                    'timestamp'   => now()->toIso8601String(),
+                    'timestamp' => now()->toIso8601String(),
                     'retry_after' => $retryAfter,
-                ], fn($v) => $v !== null),
+                ], fn ($v) => $v !== null),
             ]);
         });
 
@@ -178,10 +180,10 @@ return Application::configure(basePath: dirname(__DIR__))
             }
 
             $message = config('app.debug') ? $e->getMessage() : 'Internal server error';
-            $extra   = config('app.debug') ? [
+            $extra = config('app.debug') ? [
                 'exception' => get_class($e),
-                'file'      => $e->getFile(),
-                'line'      => $e->getLine(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
             ] : [];
 
             return $apiError(500, $message, $extra);

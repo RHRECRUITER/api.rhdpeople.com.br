@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class AddOn extends Model
@@ -21,7 +21,7 @@ class AddOn extends Model
     ];
 
     protected $casts = [
-        'price'     => 'decimal:2',
+        'price' => 'decimal:2',
         'is_active' => 'boolean',
     ];
 
@@ -41,11 +41,9 @@ class AddOn extends Model
 
     /**
      * Retorna o preço formatado para exibição no front.
-     *
-     * @return string
      */
     public function displayPrice(): string
     {
-        return '+R$ ' . number_format($this->price, 2, ',', '.');
+        return '+R$ '.number_format($this->price, 2, ',', '.');
     }
 }

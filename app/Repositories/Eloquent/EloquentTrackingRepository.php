@@ -1,10 +1,10 @@
 <?php
+
 namespace App\Repositories\Eloquent;
 
 use App\Models\Tracking\Event;
 use App\Repositories\Contracts\TrackingEventsRepositoryInterface;
 use Illuminate\Support\Facades\DB;
-use \Illuminate\Support\Str;
 
 class EloquentTrackingRepository implements TrackingEventsRepositoryInterface
 {
@@ -17,13 +17,13 @@ class EloquentTrackingRepository implements TrackingEventsRepositoryInterface
         $records = [];
         foreach ($events as $event) {
             $records[] = [
-                'id'         => $event['event_id'],
+                'id' => $event['event_id'],
                 'session_id' => $event['session_id'] ?? null,
-                'tenant_id'  => $event['tenant_id'] ?? null,
-                'user_id'    => $event['user_id'] ?? null,
+                'tenant_id' => $event['tenant_id'] ?? null,
+                'user_id' => $event['user_id'] ?? null,
                 'event_type' => $event['type'] ?? null,
-                'url'        => $event['page'] ?? null,
-                'payload'    => json_encode($event['props'] ?? []),
+                'url' => $event['page'] ?? null,
+                'payload' => json_encode($event['props'] ?? []),
                 'created_at' => date('Y-m-d H:i:s', strtotime($event['occurred_at'] ?? 'now')),
             ];
         }
@@ -36,7 +36,7 @@ class EloquentTrackingRepository implements TrackingEventsRepositoryInterface
         $duplicates = count($records) - $insertedCount;
 
         return [
-            'inserted'   => $insertedCount,
+            'inserted' => $insertedCount,
             'duplicates' => $duplicates,
         ];
     }
@@ -62,15 +62,15 @@ class EloquentTrackingRepository implements TrackingEventsRepositoryInterface
         }
 
         $firstEvent = $events->first();
-        $lastEvent  = $events->last();
+        $lastEvent = $events->last();
 
         return [
-            'landing_page'     => $firstEvent->url,
-            'exit_page'        => $lastEvent->url,
-            'started_at'       => $firstEvent->created_at,
-            'ended_at'         => $lastEvent->created_at,
+            'landing_page' => $firstEvent->url,
+            'exit_page' => $lastEvent->url,
+            'started_at' => $firstEvent->created_at,
+            'ended_at' => $lastEvent->created_at,
             'duration_seconds' => $firstEvent->created_at->diffInSeconds($lastEvent->created_at),
-            'total_events'     => $events->count(),
+            'total_events' => $events->count(),
         ];
     }
 
@@ -105,5 +105,5 @@ class EloquentTrackingRepository implements TrackingEventsRepositoryInterface
     }
 }
 
-//public function logEvent(array $data);
-//public function getEventsBySession(string $sessionId);
+// public function logEvent(array $data);
+// public function getEventsBySession(string $sessionId);

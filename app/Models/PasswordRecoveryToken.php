@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Model;
 
 class PasswordRecoveryToken extends Model
 {
@@ -12,11 +12,11 @@ class PasswordRecoveryToken extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'user_id', 
-        'token', 
-        'expires_at', 
-        'used_at', 
-        'created_at'
+        'user_id',
+        'token',
+        'expires_at',
+        'used_at',
+        'created_at',
     ];
 
     protected $casts = [
@@ -28,9 +28,8 @@ class PasswordRecoveryToken extends Model
     /**
      * RELAÇÕES
      */
-    
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
-    }    
+    }
 }

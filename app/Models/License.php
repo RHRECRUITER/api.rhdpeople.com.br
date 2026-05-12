@@ -3,8 +3,8 @@
 namespace App\Models;
 
 use App\Enums\TypeLicense;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class License extends Model
@@ -22,7 +22,7 @@ class License extends Model
 
     protected $casts = [
         'type_license' => TypeLicense::class,
-        'is_active'    => 'boolean',
+        'is_active' => 'boolean',
     ];
 
     // ─── Relationships ────────────────────────────────────────────
@@ -41,8 +41,6 @@ class License extends Model
 
     /**
      * Verifica se a licença pertence ao dono do plano.
-     *
-     * @return boolean
      */
     public function isDono(): bool
     {
@@ -51,8 +49,6 @@ class License extends Model
 
     /**
      * Verifica se a licença é operacional.
-     *
-     * @return boolean
      */
     public function isOperacional(): bool
     {
@@ -61,8 +57,6 @@ class License extends Model
 
     /**
      * Verifica se a licença é de colaborador.
-     *
-     * @return boolean
      */
     public function isColaborador(): bool
     {
@@ -72,19 +66,15 @@ class License extends Model
     /**
      * Verifica se a licença pode ser desativada.
      * O dono nunca pode ser desativado.
-     *
-     * @return boolean
      */
     public function canBeDeactivated(): bool
     {
-        return !$this->isDono();
+        return ! $this->isDono();
     }
 
     /**
      * Retorna o status inferido da licença.
      * Não há coluna status no banco — é calculado a partir de is_active.
-     *
-     * @return string
      */
     public function status(): string
     {

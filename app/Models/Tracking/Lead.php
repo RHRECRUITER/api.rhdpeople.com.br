@@ -2,14 +2,14 @@
 
 namespace App\Models\Tracking;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Model;
 
 class Lead extends Model
 {
     use HasUuids;
-    protected $connection = 'conn_rhdpeople_landingpage';
 
+    protected $connection = 'conn_rhdpeople_landingpage';
 
     protected $fillable = [
         'session_id',
@@ -18,7 +18,7 @@ class Lead extends Model
         'phone',
         'status',
         'last_field_filled',
-        'converted_at'
+        'converted_at',
     ];
 
     protected $casts = [

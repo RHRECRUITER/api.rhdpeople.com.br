@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Module extends Model
@@ -22,7 +22,7 @@ class Module extends Model
 
     protected $casts = [
         'extra_price' => 'decimal:2',
-        'is_active'   => 'boolean',
+        'is_active' => 'boolean',
     ];
 
     // ─── Relationships ────────────────────────────────────────────
@@ -41,8 +41,6 @@ class Module extends Model
 
     /**
      * Verifica se o módulo é incluso (sem custo extra).
-     *
-     * @return boolean
      */
     public function isIncluded(): bool
     {
@@ -52,8 +50,6 @@ class Module extends Model
     /**
      * Retorna o preço formatado para exibição no front.
      * Retorna 'Incluso' se não tiver custo extra.
-     *
-     * @return string
      */
     public function displayPrice(): string
     {
@@ -61,6 +57,6 @@ class Module extends Model
             return 'Incluso';
         }
 
-        return '+R$ ' . number_format($this->extra_price, 2, ',', '.');
+        return '+R$ '.number_format($this->extra_price, 2, ',', '.');
     }
 }

@@ -2,12 +2,13 @@
 
 namespace App\Models\Tracking;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Model;
 
 class DailyMetric extends Model
 {
     use HasUuids;
+
     protected $connection = 'conn_rhdpeople_landingpage';
 
     protected $fillable = [
@@ -16,7 +17,7 @@ class DailyMetric extends Model
         'total_views',
         'total_sessions',
         'total_conversions',
-        'bounce_rate'
+        'bounce_rate',
     ];
 
     protected $casts = [

@@ -1,12 +1,12 @@
 <?php
+
 namespace App\Http\Controllers\Api\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
-use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Response;
 use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
@@ -17,7 +17,7 @@ class AuthController extends Controller
 
         if (! Auth::attempt($credentials)) {
             throw ValidationException::withMessages([
-                'email'    => ['Email Invalido'],
+                'email' => ['Email Invalido'],
                 'password' => ['Senha Invalida'],
             ]);
         }

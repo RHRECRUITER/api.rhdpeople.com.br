@@ -1,15 +1,17 @@
 <?php
+
 namespace Database\Factories;
 
+use App\Enums\TypeLicense;
 use App\Models\License;
 use App\Models\Plan;
 use App\Models\User;
-use App\Enums\TypeLicense;
-
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class LicenseFactory extends Factory{
+class LicenseFactory extends Factory
+{
     protected $model = License::class;
+
     /**
      * @return array<string, mixed>
      */
@@ -23,4 +25,3 @@ class LicenseFactory extends Factory{
         ];
     }
 }
-?>

@@ -26,6 +26,7 @@ class EloquentAddOnRepository implements AddOnRepositoryInterface
     {
         $addOn = AddOn::findOrFail($id);
         $addOn->update($data);
+
         return $addOn;
     }
 
@@ -50,7 +51,7 @@ class EloquentAddOnRepository implements AddOnRepositoryInterface
     {
         return AddOn::whereHas('tierAddOns', function ($query) use ($planTierId) {
             $query->where('plan_tier_id', $planTierId)
-                  ->where('is_available', true);
+                ->where('is_available', true);
         })->get();
     }
 }

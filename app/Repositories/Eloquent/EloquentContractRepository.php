@@ -26,6 +26,7 @@ class EloquentContractRepository implements ContractRepositoryInterface
     {
         $contract = Contract::findOrFail($id);
         $contract->update($data);
+
         return $contract;
     }
 

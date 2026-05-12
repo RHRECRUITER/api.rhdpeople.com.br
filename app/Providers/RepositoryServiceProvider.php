@@ -3,53 +3,40 @@
 namespace App\Providers;
 
 use App\Repositories\Contracts\AddOnRepositoryInterface;
-use Illuminate\Support\ServiceProvider;
-
-// Importe as Interfaces e as Implementações
 use App\Repositories\Contracts\CompanyRepositoryInterface;
-use App\Repositories\Eloquent\EloquentCompanyRepository;
-
-use App\Repositories\Contracts\UserRepositoryInterface;
-use App\Repositories\Eloquent\EloquentUserRepository;
-
+// Importe as Interfaces e as Implementações
+use App\Repositories\Contracts\ContractRepositoryInterface;
+use App\Repositories\Contracts\DailyMetricRepositoryInterface;
 use App\Repositories\Contracts\EmailTokenRepositoryInterface;
-use App\Repositories\Eloquent\EloquentEmailTokenRepository;
-
-use App\Repositories\Contracts\PasswordRecoveryRepositoryInterface;
-use App\Repositories\Eloquent\EloquentPasswordRecoveryRepository;
-
 use App\Repositories\Contracts\EmployeeInviteRepositoryInterface;
-use App\Repositories\Eloquent\EloquentEmployeeInviteRepository;
-
-use App\Repositories\Contracts\TrackingEventsRepositoryInterface;
-use App\Repositories\Eloquent\EloquentTrackingRepository;
-
-use App\Repositories\Contracts\SessionBlockRepositoryInterface;
-use App\Repositories\Eloquent\EloquentSessionBlockRepository;
-
-use \App\Repositories\Contracts\DailyMetricRepositoryInterface;
-use \App\Repositories\Eloquent\EloquentDailyMetricRepository;
-
-use \App\Repositories\Contracts\LeadRepositoryInterface;
-use \App\Repositories\Eloquent\EloquentLeadRepository;
-
-use \App\Repositories\Contracts\PlanRepositoryInterface;
-use \App\Repositories\Eloquent\EloquentPlanRepository;
-
-use \App\Repositories\Contracts\LicenseRepositoryInterface;
-use \App\Repositories\Eloquent\EloquentLicenseRepository;
-
-use \App\Repositories\Contracts\ContractRepositoryInterface;
+use App\Repositories\Contracts\LeadRepositoryInterface;
+use App\Repositories\Contracts\LicenseRepositoryInterface;
 use App\Repositories\Contracts\ModuleRepositoryInterface;
+use App\Repositories\Contracts\PasswordRecoveryRepositoryInterface;
+use App\Repositories\Contracts\PlanRepositoryInterface;
 use App\Repositories\Contracts\PlanTierRepositoryInterface;
+use App\Repositories\Contracts\SessionBlockRepositoryInterface;
+use App\Repositories\Contracts\TrackingEventsRepositoryInterface;
+use App\Repositories\Contracts\UserRepositoryInterface;
 use App\Repositories\Eloquent\EloquentAddOnRepository;
-use \App\Repositories\Eloquent\EloquentContractRepository;
+use App\Repositories\Eloquent\EloquentCompanyRepository;
+use App\Repositories\Eloquent\EloquentContractRepository;
+use App\Repositories\Eloquent\EloquentDailyMetricRepository;
+use App\Repositories\Eloquent\EloquentEmailTokenRepository;
+use App\Repositories\Eloquent\EloquentEmployeeInviteRepository;
+use App\Repositories\Eloquent\EloquentLeadRepository;
+use App\Repositories\Eloquent\EloquentLicenseRepository;
 use App\Repositories\Eloquent\EloquentModuleRepository;
+use App\Repositories\Eloquent\EloquentPasswordRecoveryRepository;
+use App\Repositories\Eloquent\EloquentPlanRepository;
 use App\Repositories\Eloquent\EloquentPlanTierRepository;
+use App\Repositories\Eloquent\EloquentSessionBlockRepository;
+use App\Repositories\Eloquent\EloquentTrackingRepository;
+use App\Repositories\Eloquent\EloquentUserRepository;
+use Illuminate\Support\ServiceProvider;
 
 class RepositoryServiceProvider extends ServiceProvider
 {
-
     public function register(): void
     {
         // BIND DA INTERFACE COM O REPOSITORY
@@ -85,7 +72,6 @@ class RepositoryServiceProvider extends ServiceProvider
             EmployeeInviteRepositoryInterface::class,
             EloquentEmployeeInviteRepository::class
         );
-
 
         /**
          * TRACKING

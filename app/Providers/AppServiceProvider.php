@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Providers;
 
 use App\Domain\Landing\LeadsStore;
@@ -16,22 +17,23 @@ use Illuminate\Support\ServiceProvider;
  * 1. Injeção de Dependência (Bindings de Interfaces).
  * 2. Extensão de classes core (Macros de Resposta).
  * 3. Políticas de segurança de tráfego (Rate Limiting).
- * * @package App\Providers
+ *
  * @author Luan Quevedo
  */
 class AppServiceProvider extends ServiceProvider
 {
-
     public function register(): void
     {
         $this->app->bind(LeadsStore::class, InMemoryLeadsStore::class);
     }
+
     public function boot(): void
     {
         /**
          * Define o padrão de contrato JSON para todas as respostas da API.
          * Adiciona o macro 'api' à Facade Response.
          * * Uso: return response()->api($data, $message, $status, $meta);
+         *
          * * @return void
          */
         Response::macro('api', function (
@@ -43,14 +45,15 @@ class AppServiceProvider extends ServiceProvider
             return response()->json([
                 'success' => $status < 400,
                 'message' => $message,
-                'data'    => $data,
-                'meta'    => $meta + ['timestamp' => now()->toIso8601String()],
+                'data' => $data,
+                'meta' => $meta + ['timestamp' => now()->toIso8601String()],
             ], $status);
         });
 
         /**
          * Configura as políticas de aceleração (Throttle) da aplicação.
          * Protege contra ataques de força bruta e DoS (Denial of Service).
+         *
          * * @return void
          */
         RateLimiter::for('api', function (Request $request) {

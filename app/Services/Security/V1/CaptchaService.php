@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Security\V1;
 
 use Illuminate\Support\Facades\Cache;
@@ -10,12 +11,14 @@ use Illuminate\Support\Str;
  * Serviço responsavel pela criação e validação de captchas
  * Utiliza a lib GD nativa do php.
  * Evita perssitencia de dados sensiveis.
+ *
  * @author Luan Quevedo
  */
 class CaptchaService
 {
     /** @var int Quantidade de caracteres gerados no captcha */
     private const CAPTCHA_LENGTH = 5;
+
     /**
      * Gera um desafio captcha
      * Fluxo de funcionamento
@@ -24,17 +27,17 @@ class CaptchaService
      * 3. Renderização via buffer para saida em Base64
      * 4. Adição de ruido na imagem
      *
-     * @param int $width lagura de imagem
-     * @param int $height altura de imagem
+     * @param  int  $width  lagura de imagem
+     * @param  int  $height  altura de imagem
      * @return array{image: string, key: string} Retorna o UUID (key) e a imagem em Data URI (image).
      */
     public function generateCaptcha(int $width = 160, int $height = 60): array
     {
 
-        //geração de codigo para validação do captcha
+        // geração de codigo para validação do captcha
         $chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%&*';
-        $code  = '';
-        $max   = strlen($chars) - 1;
+        $code = '';
+        $max = strlen($chars) - 1;
         for ($i = 0; $i < self::CAPTCHA_LENGTH; $i++) {
             $code .= $chars[random_int(0, $max)];
         }
@@ -44,8 +47,8 @@ class CaptchaService
         // Armazenamento com expiração de 3 minutos
         Cache::put("captcha:{$key}", $code, now()->addMinutes(3));
 
-        //geração da imagem do captcha
-        $image = ImageCreateTrueColor($width, $height);
+        // geração da imagem do captcha
+        $image = imagecreatetruecolor($width, $height);
         imageantialias($image, true);
 
         $bgColor = imagecolorallocate($image, 255, 255, 255);
@@ -57,20 +60,20 @@ class CaptchaService
             $lineColor = imagecolorallocate($image, rand(100, 200), rand(100, 200), rand(100, 200));
             imageline($image, 0, rand(0, $height), $width, rand(0, $height), $lineColor);
         }
-        //Geraçãod e pontos de ruido.
+        // Geraçãod e pontos de ruido.
         for ($i = 0; $i < 4080; $i++) {
             $dotColor = imagecolorallocate($image, rand(150, 220), rand(150, 220), rand(150, 220));
             imagesetpixel($image, rand(0, $width), rand(0, $height), $dotColor);
         }
 
-        $length         = strlen($code);
+        $length = strlen($code);
         $characterWidth = ($width - 20) / $length;
 
         for ($i = 0; $i < $length; $i++) {
 
             $charColor = imagecolorallocate($image, rand(0, 80), rand(0, 80), rand(0, 80));
-            $x         = 10 + ($i * $characterWidth) + rand(-2, 2);
-            $y         = rand(15, $height - 25);
+            $x = 10 + ($i * $characterWidth) + rand(-2, 2);
+            $y = rand(15, $height - 25);
             // Utiliza fonte interna 4 da GD
             imagestring($image, 4, $x, $y, $code[$i], $charColor);
         }
@@ -81,8 +84,8 @@ class CaptchaService
         imagedestroy($image);
 
         return [
-            'key'   => $key,
-            'image' => 'data:image/png;base64,' . base64_encode($imageData),
+            'key' => $key,
+            'image' => 'data:image/png;base64,'.base64_encode($imageData),
         ];
     }
 
@@ -91,8 +94,8 @@ class CaptchaService
      * * Implementa o conceito de 'Atomic Pull': uma vez consultado, o código é
      * removido do cache.
      *
-     * @param string $key UUID de identificação do captcha.
-     * @param string $input Valor digitado pelo usuário.
+     * @param  string  $key  UUID de identificação do captcha.
+     * @param  string  $input  Valor digitado pelo usuário.
      * @return bool True se o código for válido e estiver dentro do prazo; False caso contrário.
      */
     public function validateCaptcha(string $key, string $input): bool
@@ -103,6 +106,7 @@ class CaptchaService
         if (! $storedCode) {
             return false;
         }
+
         // Comparação Type-Safe e Case-Sensitive
         return $input === $storedCode;
     }

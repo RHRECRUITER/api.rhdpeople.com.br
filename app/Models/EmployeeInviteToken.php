@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Model;
 
 class EmployeeInviteToken extends Model
 {
@@ -12,12 +12,12 @@ class EmployeeInviteToken extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'tenant_id', 
-        'token', 
+        'tenant_id',
+        'token',
         'email',
-        'expires_at', 
-        'used_at', 
-        'created_at'
+        'expires_at',
+        'used_at',
+        'created_at',
     ];
 
     protected $casts = [
@@ -29,7 +29,6 @@ class EmployeeInviteToken extends Model
     /**
      * RELAÇÕES
      */
-
     public function company(): BelongsTo
     {
         return $this->belongsTo(Company::class, 'tenant_id');

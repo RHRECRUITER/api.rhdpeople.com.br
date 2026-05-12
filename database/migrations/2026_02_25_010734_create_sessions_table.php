@@ -13,6 +13,7 @@ return new class extends Migration
          * $this->connection = 'conn_rhdpeople_landingpage';
          */
     }
+
     /**
      * Run the migrations.
      */

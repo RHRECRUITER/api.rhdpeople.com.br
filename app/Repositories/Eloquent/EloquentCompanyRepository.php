@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Repositories\Eloquent;
 
 use App\Models\Company;
@@ -32,12 +33,14 @@ class EloquentCompanyRepository implements CompanyRepositoryInterface
     {
         $company = $this->findById($id);
         $company->update($data);
+
         return $company;
     }
 
     public function delete(string $id)
     {
         $company = $this->findById($id);
+
         return $company->delete();
     }
 }

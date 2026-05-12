@@ -13,15 +13,15 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->foreignUuid('tenant_id')->after('id')->constrained('companies')->onDelete('cascade');
-            
+
             $table->string('name')->after('tenant_id');
             $table->string('email')->unique()->after('name');
             $table->string('password')->after('email');
-            
+
             // Enums
             $table->enum('type', ['super_admin', 'system_admin', 'company_admin', 'company_user'])->after('password');
             $table->enum('status', ['active', 'blocked', 'pending'])->default('pending')->after('type');
-            
+
             $table->timestamp('email_verified_at')->nullable()->after('status');
         });
     }
@@ -33,5 +33,4 @@ return new class extends Migration
             $table->dropColumn(['tenant_id', 'name', 'email', 'password', 'type', 'status', 'email_verified_at']);
         });
     }
-   
 };
