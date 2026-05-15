@@ -1,12 +1,13 @@
 <?php
 
-use App\Http\Middleware\Security\v1\CheeckCaptchaToken;
+use App\Http\Middleware\Security\v1\CheckCaptchaToken;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
+use Illuminate\Database\QueryException;
 use Illuminate\Validation\ValidationException;
 use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -42,7 +43,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->alias([
-            'captcha.check' => CheeckCaptchaToken::class,
+            'captcha.check' => CheckCaptchaToken::class,
         ]);
     })
     ->withMiddleware(function (Middleware $middleware) {
@@ -170,7 +171,16 @@ return Application::configure(basePath: dirname(__DIR__))
                 return null;
             }
 
-            return $apiError(419, 'CSRF token mismatch. The request needs a valid XSRF-TOKEN.');
+            return $apiError(401, 'Session expired or invalid security token.');
+        });
+
+        // Trata erros de Banco de Dados. Em produção, igualamos ao erro 500 genérico.
+        $exceptions->render(function (QueryException $e, Request $request) use ($isApi, $apiError) {
+            if (! $isApi($request)) {
+                return null;
+            }
+            $msg = config('app.debug') ? $e->getMessage() : 'Internal server error';
+            return $apiError(500, $msg);
         });
 
         // 500 - Genérico, sem expor detalhes (stacktrace/mensagem interna).

@@ -66,14 +66,19 @@ class CaptchaController extends Controller
             $request->captcha_code
         );
         if (! $isValid) {
-            return Response::api(null, 'Captcha invalido ou expirado', 422);
+            return Response::api(null, config('app.debug')
+                ? 'Captcha invalido ou expirado'
+                : 'Validation failed', 422);
         }
 
         $token = Str::random(64);
 
         // Persistência do token com vínculo de sessão e contexto
         Cache::put("validated_action:{$token}", [
+            // Em /api a sessão pode ser stateless; mantemos o vínculo quando existir.
             'session_id' => session()->getId(),
+            // Fallback para cenários sem cookie de sessão (ex.: SPA, Postman, integrações).
+            'fingerprint' => hash('sha256', ($request->ip() ?? '').'|'.($request->userAgent() ?? '')),
             'context' => $request->context,
         ], now()->addMinutes(5));
 

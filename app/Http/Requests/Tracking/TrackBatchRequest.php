@@ -32,7 +32,16 @@ class TrackBatchRequest extends FormRequest
     public function withValidator(Validator $validator): void
     {
         $validator->after(function (Validator $validator) {
+            // Verifica se o session_id enviado no payload condiz com a sessão real do request
+            // Isso impede que um cliente envie eventos "fake" para sessões de terceiros.
+            if ($this->input('session_id') !== session()->getId() && !config('app.debug')) {
+                $validator->errors()->add('session_id', 'Security session mismatch.');
+                return;
+            }
+
             $allowed = EventSchema::allowedEventKeys();
+            $isDebug = config('app.debug');
+            $genericError = 'Invalid request structure.';
 
             foreach ((array) $this->input('events', []) as $i => $event) {
                 if (! is_array($event)) {
@@ -42,7 +51,7 @@ class TrackBatchRequest extends FormRequest
                 $extra = array_diff(array_keys($event), $allowed);
 
                 foreach ($extra as $key) {
-                    $validator->errors()->add("events.$i.$key", 'Field not allowed.');
+                    $validator->errors()->add("events.$i.$key", $isDebug ? 'Field not allowed.' : $genericError);
                 }
 
                 $type = $event['type'] ?? null;
@@ -60,12 +69,12 @@ class TrackBatchRequest extends FormRequest
 
                 $extraProps = array_diff(array_keys($props), $allowedProps);
                 foreach ($extraProps as $key) {
-                    $validator->errors()->add("events.$i.props.$key", 'Prop not allowed.');
+                    $validator->errors()->add("events.$i.props.$key", $isDebug ? 'Prop not allowed.' : $genericError);
                 }
 
                 foreach ($requiredProps as $prop) {
                     if (! array_key_exists($prop, $props)) {
-                        $validator->errors()->add("events.$i.props.$prop", 'Prop is required.');
+                        $validator->errors()->add("events.$i.props.$prop", $isDebug ? 'Prop is required.' : $genericError);
                     }
                 }
 
@@ -80,7 +89,7 @@ class TrackBatchRequest extends FormRequest
                     }
 
                     if (! is_string($value) || ! in_array($value, $allowedValues, true)) {
-                        $validator->errors()->add("events.$i.props.$prop", 'Invalid value.');
+                        $validator->errors()->add("events.$i.props.$prop", $isDebug ? 'Invalid value.' : $genericError);
                     }
                 }
             }
