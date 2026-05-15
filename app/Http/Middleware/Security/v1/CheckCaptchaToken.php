@@ -48,14 +48,16 @@ class CheckCaptchaToken
         $fingerprint = hash('sha256', ($request->ip() ?? '').'|'.($request->userAgent() ?? ''));
         $fingerprintMatches = isset($storedData['fingerprint']) && $storedData['fingerprint'] === $fingerprint;
 
-        Log::info("Captcha Debug: Verificando vínculos", [
-            'session_stored' => $storedData['session_id'],
-            'session_current' => $currentSessionId,
-            'fingerprint_stored' => $storedData['fingerprint'],
-            'fingerprint_current' => $fingerprint,
-            'ip' => $request->ip(),
-            'ua' => $request->userAgent()
-        ]);
+        if (config('app.debug')) {
+            Log::info("Captcha Debug: Verificando vínculos", [
+                'session_stored' => $storedData['session_id'],
+                'session_current' => $currentSessionId,
+                'fingerprint_stored' => $storedData['fingerprint'],
+                'fingerprint_current' => $fingerprint,
+                'ip' => $request->ip(),
+                'ua' => $request->userAgent()
+            ]);
+        }
 
         if (! $sessionMatches && ! $fingerprintMatches) {
             return Response::api(null, config('app.debug') ? 'Vinculo de segurança (Sessao/Fingerprint) nao coincide' : 'Acesso não autorizado', 403);
