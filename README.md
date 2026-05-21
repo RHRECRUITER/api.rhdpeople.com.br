@@ -24,7 +24,6 @@ Para entender a fundo as decisões arquiteturais, fluxos de dados, regras de neg
 * **Base de Dados:** MySQL 8.0 (O sistema utiliza múltiplas conexões para isolamento de dados: `geral` e `landingpage`).
 * **Cache e Filas:** Redis (Altamente recomendado para gerenciar Throttling e Cache de uso único do Captcha).
 * **Runtime:** Docker com Laravel Sail (Pré-configurado para um ambiente isolado).
-* **Frontend Build:** Node.js + NPM (Para empacotamento via Vite).
 
 ---
 
@@ -34,7 +33,6 @@ Para entender a fundo as decisões arquiteturais, fluxos de dados, regras de neg
 
 ```bash
 composer install
-npm install
 
 ```
 

@@ -13,6 +13,7 @@
 /.idea/
 /.vscode/
 _ide_helper.php
+.htaccess
 
 # Postman collections (local dev)
 /postman/

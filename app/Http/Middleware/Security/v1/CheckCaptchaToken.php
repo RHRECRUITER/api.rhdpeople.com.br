@@ -30,7 +30,7 @@ class CheckCaptchaToken
         }
 
         $cacheKey = "validated_action:{$token}";
-        $storedData = Cache::get($cacheKey);
+        $storedData = Cache::pull($cacheKey);
 
         if (! $storedData) {
             Log::warning("Captcha Debug: Token não encontrado no cache", ['token' => $token, 'key' => $cacheKey]);
@@ -67,7 +67,7 @@ class CheckCaptchaToken
 
         // Só consome o token se a requisição não falhou por validação ou erro de servidor.
         if ($response->getStatusCode() < 400) {
-            Cache::forget($cacheKey);
+            //Cache::forget($cacheKey);
         }
 
         return $response;

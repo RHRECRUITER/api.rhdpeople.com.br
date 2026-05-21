@@ -24,7 +24,9 @@ class AppServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        $this->app->bind(LeadsStore::class, InMemoryLeadsStore::class);
+        $this->app->bind(LeadsStore::class, function ($app) {
+    return new InMemoryLeadsStore();
+});
     }
 
     public function boot(): void
