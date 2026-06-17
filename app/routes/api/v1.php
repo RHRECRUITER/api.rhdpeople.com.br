@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\Audit\V1\LogsController;
 use App\Http\Controllers\Api\Analytics\V1\Tracking\TrackController;
 use App\Http\Controllers\Api\Landing\Leads\V1\LeadsController;
 use App\Http\Controllers\Api\Security\V1\CaptchaController;
@@ -44,6 +45,18 @@ Route::prefix('landing')->group(function () {
     Route::post('/leads', [LeadsController::class, 'store'])
         ->middleware('captcha.check:leads_landing')
         ->name('landing.leads');
+});
+
+/**
+ * Módulo: Logs
+ * Ingestão e consulta de logs de auditoria com fila assíncrona para persistência.
+ */
+Route::prefix('logs')->group(function () {
+    Route::post('/', [LogsController::class, 'store'])
+        ->name('logs.store');
+
+    Route::get('/', [LogsController::class, 'index'])
+        ->name('logs.index');
 });
 
 /**
