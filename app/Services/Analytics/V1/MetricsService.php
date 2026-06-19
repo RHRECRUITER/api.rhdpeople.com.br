@@ -1,9 +1,13 @@
 <?php
 namespace App\Services\Analytics\V1;
 
+use App\Repositories\Eloquent\EloquentDailyMetricRepository;
 
 use Illuminate\Support\Facades\DB;
 class MetricsService{
+    public function __construct(
+        protected EloquentDailyMetricRepository $repositoryMetrics
+    ){}
     private function calculateConversionRate(array $views_totals, array $conversions_totals) : array{
         //Obtem a taxa de conversão, atráves do cálculo pela quantidade total de visitas e conversões
         return array_map(function($views_total, $conversions_total){
@@ -13,20 +17,12 @@ class MetricsService{
         },$views_totals,$conversions_totals);
     }
     public function getOverview($start_date,$end_date){
-
         //Formatação das datas
         $end_date = $end_date->format('Y-m-d');
         $start_date = $start_date->format('Y-m-d');
 
         //Coleta dos dados e conversão em vetores
-        $datas = DB::select("
-            SELECT
-                date,
-                total_views,
-                total_conversions,
-                bounce_rate
-            FROM daily_metrics WHERE date BETWEEN ? AND ?
-        ", [$start_date, $end_date]);
+        $datas = $this->repositoryMetrics->getByDateRange($start_date, $end_date);
 
         $dates = [];
         $view_totals = [];
@@ -34,7 +30,7 @@ class MetricsService{
         $bounce_rates = [];
 
         foreach($datas as $data){
-            $dates[] = $data->date;
+            $dates[] = $data->date->format('Y-m-d');
             $view_totals[] = $data->total_views;
             $conversions_totals[] = $data->total_conversions;
             $bounce_rates[] = round($data->bounce_rate,2);
@@ -43,14 +39,7 @@ class MetricsService{
         $conversion_rates = $this->calculateConversionRate($view_totals, $conversions_totals);
 
         //Calculo das médias das métricas
-        $sql = DB::select("
-            SELECT
-                COUNT(*) AS data_count,
-                SUM(total_views) AS sum_views,
-                SUM(total_conversions) AS sum_conversions,
-                SUM(bounce_rate) AS sum_bounces
-            FROM daily_metrics WHERE date BETWEEN ? AND ?
-        ", [$start_date, $end_date]);
+        $sql = $this->repositoryMetrics->getAverageAllColuns($start_date, $end_date);
 
         $average_views = 0;
         $average_conversions = 0;
