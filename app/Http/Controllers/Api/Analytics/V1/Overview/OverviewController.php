@@ -16,8 +16,8 @@ class OverviewController{
     private function validateRequest(Request $request){
         //Formata a requisição recebida em uma data válida.
         $date_interval = 7;
-        $start_date = rescue(fn()=>Carbon::parse($request->query('start_date')),Carbon::today(),false);
-        $end_date = rescue(fn()=> Carbon::parse($request->query('end_date')),Carbon::today()->addDays($date_interval),false);
+        $start_date = rescue(fn()=>Carbon::parse($request->query('start_date')),Carbon::today()->subDays($date_interval),false);
+        $end_date = rescue(fn()=> Carbon::parse($request->query('end_date')),Carbon::today(),false)->min(Carbon::today());
         return[
             "start_date" => $start_date,
             "end_date" => $end_date,
