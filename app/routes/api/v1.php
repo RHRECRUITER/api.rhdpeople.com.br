@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\Api\Analytics\V1\Tracking\TrackController;
+use App\Http\Controllers\Api\Auth\LoginController;
+use App\Http\Controllers\Api\Auth\RegisterController;
 use App\Http\Controllers\Api\Landing\Leads\V1\LeadsController;
 use App\Http\Controllers\Api\Security\V1\CaptchaController;
 use Illuminate\Support\Facades\Response;
@@ -8,65 +10,40 @@ use Illuminate\Support\Facades\Route;
 
 /**
  * API Routes - Version 1
- * * Este arquivo define todos os endpoints da versão 1 da API RHDPeople.
- * A organização segue uma estrutura modular baseada em prefixos para facilitar
- * a manutenção e a aplicação de políticas de segurança (Throttling, Auth).
- *
+ * Estrutura modular otimizada por pilhas de middleware (CSRF, Auth e Throttling).
  * * @author Luan Quevedo
- *
- * @since 2026-04
  */
 
-/**
- * Módulo: Security
- * Gerenciamento de desafios visuais e tokens de validação.
- * Throttling: Limite de 10 tentativas por minuto (configurado em AppServiceProvider).
- */
-Route::prefix('security')->group(function () {
-    Route::get('/captcha/generate', [CaptchaController::class, 'getCaptcha'])
-        ->middleware('throttle:captcha')
-        ->name('security.captcha.generate');
+// ─── GRUPO 1: ROTAS PÚBLICAS (Sessão, Cookies e CSRF Ativos) ─────────────────────────
+Route::middleware(['web'])->group(function () {
 
-    Route::post('/captcha/verify', [CaptchaController::class, 'validateCaptcha'])
-        ->middleware('throttle:captcha')
-        ->name('security.captcha.verify');
-});
+    // Sub-módulo: Autenticação Inicial
+    Route::prefix('auth')->group(function () {
+        Route::post('/register', [RegisterController::class, 'store']);
+        Route::post('/login', [LoginController::class, 'store']);
+    });
 
-/**
- * Módulo: Landing Page
- * Endpoints públicos voltados para conversão e monitoramento de saúde da aplicação.
- */
-Route::prefix('landing')->group(function () {
-    // Healthcheck simples para verificar se a API está respondendo.
-    Route::get('/health', fn() => Response::api(['status' => 'ok']));
+    // Sub-módulo: Security
+    Route::prefix('security')->middleware('throttle:captcha')->group(function () {
+        Route::get('/captcha/generate', [CaptchaController::class, 'getCaptcha'])->name('security.captcha.generate');
+        Route::post('/captcha/verify', [CaptchaController::class, 'validateCaptcha'])->name('security.captcha.verify');
+    });
 
-    // Registro de Leads: Protegido por Captcha atômico com contexto de landing page.
-    Route::post('/leads', [LeadsController::class, 'store'])
-        ->middleware('captcha.check:leads_landing')
-        ->name('landing.leads');
-});
-
-/**
- * Módulo: Auth
- * Gerenciamento de sessões e autenticação via Laravel Sanctum (Stateful).
- */
-Route::prefix('auth')->group(function () {
-
-    // Rotas protegidas (exigem cookie de sessão válido do Sanctum)
-    Route::middleware('auth:sanctum')->group(function () {
+    // Sub-módulo: Landing Page
+    Route::prefix('landing')->group(function () {
+        Route::get('/health', fn() => Response::api(['status' => 'ok']));
+        Route::post('/leads', [LeadsController::class, 'store'])->middleware('captcha.check:leads_landing')->name('landing.leads');
     });
 });
 
-/**
- * Módulo: Analytics
- * Coleta de métricas comportamentais e exibição de indicadores de engajamento.
- */
-Route::prefix('analytics')->group(function () {
-    /**
-     * Ingestão de Eventos: Recebe cliques, scroll e interações do frontend.
-     * Throttling: 60 requisições por minuto para suportar múltiplos eventos de tracking.
-     */
-    Route::post('/track', [TrackController::class, 'store'])
-        ->middleware(['throttle:tracking'])
-        ->name('analytics.track');
+// ─── GRUPO 2: ROTAS PROTEGIDAS (Exigem Autenticação via Sessão/Sanctum) ───────────────
+Route::middleware(['web', 'auth:sanctum'])->group(function () {
+
+    // Revogação de Acesso
+    Route::post('/auth/logout', [LoginController::class, 'destroy']);
+
+    // Sub-módulo: Analytics (Limitador de taxa aplicado no nível do prefixo)
+    Route::prefix('analytics')->middleware('throttle:tracking')->group(function () {
+        Route::post('/track', [TrackController::class, 'store'])->name('analytics.track');
+    });
 });
