@@ -11,10 +11,11 @@ A arquitetura foi desenhada com foco em modularidade, separando de forma clara a
 Para entender a fundo as decisões arquiteturais, fluxos de dados, regras de negócio e como realizar testes em cada contexto, consulte as documentações específicas de cada módulo:
 
 1. 🔐 **[Core & Autenticação (Sanctum, CORS, Bootstrap)](/Docs/Core/README-Core-Stateful-Auth.md)**
-2. 🛡️ **[Segurança (Captcha Atômico e Validação de Contexto)](/Docs/Security/Captcha.README.md)**
-3. 📊 **[Tracking e Analytics (Ingestão de Eventos em Lote)](/Docs/Tracking/Tracking.README.md)**
-4. 🧲 **[Captação de Leads (Landing Page)](/Docs/Landing/Lead.README.md)**
-5. 💳 **[Planos e Assinaturas (Tiers, Licenças e Contratos)](/Docs/Data/planos_readme.md)**
+2. 👤 **[Autenticação & Registro (Cadastro, Login, Licenças e Sessões Stateful)](/Docs/Core/README-Auth.md)**
+3. 🛡️ **[Segurança (Captcha Atômico e Validação de Contexto)](/Docs/Security/Captcha.README.md)**
+4. 📊 **[Tracking e Analytics (Ingestão de Eventos em Lote)](/Docs/Tracking/Tracking.README.md)**
+5. 🧲 **[Captação de Leads (Landing Page)](/Docs/Landing/Lead.README.md)**
+6. 💳 **[Planos e Assinaturas (Tiers, Licenças e Contratos)](/Docs/Data/planos_readme.md)**
 
 ---
 
@@ -57,7 +58,8 @@ php artisan cache:table
 php artisan queue:table
 php artisan queue:failed-table
 php artisan queue:batches-table
-php artisan migrate --seed
+php artisan migrate --database=conn_rhdpeople_geral --path=database/migrations/DB_Geral
+php artisan migrate --database=conn_rhdpeople_landingpage --path=database/migrations/DB_LandingPage
 
 ```
 
@@ -90,9 +92,9 @@ php artisan serve
 
 O desenvolvimento do **RHdPeople API** segue em ritmo acelerado. As próximas entregas focarão na consolidação do acesso, armazenamento definitivo de métricas e rastreabilidade administrativa:
 
-* [ ] **Módulo de Autenticação (Auth API):**
-* Criação completa dos endpoints de `login`, `logout` e recuperação dos dados da sessão (`/me`).
-* Implementação do sistema de **Roles de Acesso**, diferenciando estritamente os perfis (Dono, Operacional e Colaborador) baseados nas licenças ativas.
+- [x] **Módulo de Autenticação e Registro**
+  - Implementado e documentado em `/Docs/Core/README-Auth.md`.
+  - O roadmap detalhado deste módulo passou a ser mantido exclusivamente em sua documentação específica.
 
 
 * [ ] **Integração de Leads (Database):**
