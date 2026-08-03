@@ -16,6 +16,12 @@ use App\Repositories\Contracts\PasswordRecoveryRepositoryInterface;
 use App\Repositories\Contracts\PlanRepositoryInterface;
 use App\Repositories\Contracts\PlanTierRepositoryInterface;
 use App\Repositories\Contracts\SessionBlockRepositoryInterface;
+use App\Repositories\Contracts\Syslog\AuthenticationLogRepositoryInterface;
+use App\Repositories\Contracts\Syslog\ContractLogRepositoryInterface;
+use App\Repositories\Contracts\Syslog\LicenseLogRepositoryInterface;
+use App\Repositories\Contracts\Syslog\SysLogRepositoryInterface;
+use App\Repositories\Contracts\Syslog\TenantAdminLogRepositoryInterface;
+use App\Repositories\Contracts\Syslog\WebhookLogRepositoryInterface;
 use App\Repositories\Contracts\TrackingEventsRepositoryInterface;
 use App\Repositories\Contracts\UserRepositoryInterface;
 use App\Repositories\Eloquent\EloquentAddOnRepository;
@@ -33,6 +39,12 @@ use App\Repositories\Eloquent\EloquentPlanTierRepository;
 use App\Repositories\Eloquent\EloquentSessionBlockRepository;
 use App\Repositories\Eloquent\EloquentTrackingRepository;
 use App\Repositories\Eloquent\EloquentUserRepository;
+use App\Repositories\Eloquent\EloquentWebhookLogRepository;
+use App\Repositories\Eloquent\Syslog\EloquentAuthenticationLogRepository;
+use App\Repositories\Eloquent\Syslog\EloquentContractLogRepository;
+use App\Repositories\Eloquent\Syslog\EloquentLicenseLogRepository;
+use App\Repositories\Eloquent\Syslog\EloquentSysLogRepository;
+use App\Repositories\Eloquent\Syslog\EloquentTenantAdminLogRepository;
 use Illuminate\Support\ServiceProvider;
 
 class RepositoryServiceProvider extends ServiceProvider
@@ -117,9 +129,43 @@ class RepositoryServiceProvider extends ServiceProvider
             ModuleRepositoryInterface::class,
             EloquentModuleRepository::class
         );
+
         $this->app->bind(
             AddOnRepositoryInterface::class,
             EloquentAddOnRepository::class
+        );
+
+
+        /**
+         * SYSLOG AUDITION
+         */
+        $this->app->bind(
+            SysLogRepositoryInterface::class,
+            EloquentSysLogRepository::class
+        );
+        $this->app->bind(
+            AuthenticationLogRepositoryInterface::class,
+            EloquentAuthenticationLogRepository::class
+        );
+
+        $this->app->bind(
+            ContractLogRepositoryInterface::class,
+            EloquentContractLogRepository::class
+        );
+
+        $this->app->bind(
+            LicenseLogRepositoryInterface::class,
+            EloquentLicenseLogRepository::class
+        );
+
+        $this->app->bind(
+            TenantAdminLogRepositoryInterface::class,
+            EloquentTenantAdminLogRepository::class
+        );
+
+        $this->app->bind(
+            WebhookLogRepositoryInterface::class,
+            EloquentWebhookLogRepository::class
         );
 
     }
