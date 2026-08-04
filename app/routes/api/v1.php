@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\Analytics\V1\Tracking\TrackController;
 use App\Http\Controllers\Api\Audit\V1\LogsController;
 use App\Http\Controllers\Api\Auth\LoginController;
+use App\Http\Controllers\Api\Analytics\V1\Overview\OverviewController;
 use App\Http\Controllers\Api\Auth\RegisterController;
 use App\Http\Controllers\Api\Landing\Leads\V1\LeadsController;
 use App\Http\Controllers\Api\Security\V1\CaptchaController;
@@ -54,6 +55,10 @@ Route::middleware(['web', 'auth:sanctum'])->group(function () {
     // Sub-módulo: Analytics (Limitador de taxa aplicado no nível do prefixo)
     Route::prefix('analytics')->middleware('throttle:tracking')->group(function () {
         Route::post('/track', [TrackController::class, 'store'])->name('analytics.track');
+    });
+    Route::prefix('/dashboard')
+        ->group(function (){
+            Route::get('/overview', [OverviewController::class,'index'])->name('dashboard.overview');
     });
 
     Route::prefix('logs')->group(function () {
