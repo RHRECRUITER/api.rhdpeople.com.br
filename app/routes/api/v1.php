@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\Analytics\V1\Tracking\TrackController;
+use App\Http\Controllers\Api\Audit\V1\LogsController;
 use App\Http\Controllers\Api\Auth\LoginController;
 use App\Http\Controllers\Api\Auth\RegisterController;
 use App\Http\Controllers\Api\Landing\Leads\V1\LeadsController;
@@ -29,10 +30,18 @@ Route::middleware(['web'])->group(function () {
         Route::post('/captcha/verify', [CaptchaController::class, 'validateCaptcha'])->name('security.captcha.verify');
     });
 
-    // Sub-módulo: Landing Page
+/**
+ * Módulo: Landing Page
+ * Endpoints públicos voltados para conversão e monitoramento de saúde da aplicação.
+ */
     Route::prefix('landing')->group(function () {
+        // Healthcheck simples para verificar se a API está respondendo.
         Route::get('/health', fn() => Response::api(['status' => 'ok']));
-        Route::post('/leads', [LeadsController::class, 'store'])->middleware('captcha.check:leads_landing')->name('landing.leads');
+
+        // Registro de Leads: Protegido por Captcha atômico com contexto de landing page.
+        Route::post('/leads', [LeadsController::class, 'store'])
+            ->middleware('captcha.check:leads_landing')
+            ->name('landing.leads');
     });
 });
 
@@ -45,5 +54,13 @@ Route::middleware(['web', 'auth:sanctum'])->group(function () {
     // Sub-módulo: Analytics (Limitador de taxa aplicado no nível do prefixo)
     Route::prefix('analytics')->middleware('throttle:tracking')->group(function () {
         Route::post('/track', [TrackController::class, 'store'])->name('analytics.track');
+    });
+
+    Route::prefix('logs')->group(function () {
+        Route::post('/', [LogsController::class, 'store'])
+            ->name('logs.store');
+
+        Route::get('/', [LogsController::class, 'index'])
+            ->name('logs.index');
     });
 });
