@@ -4,7 +4,7 @@ namespace App\Repositories\Eloquent;
 
 use App\Models\PasswordRecoveryToken;
 use App\Repositories\Contracts\PasswordRecoveryRepositoryInterface;
-use Illuminate\Support\Str;
+use Carbon\CarbonInterface;
 
 class EloquentPasswordRecoveryRepository implements PasswordRecoveryRepositoryInterface
 {
@@ -12,36 +12,27 @@ class EloquentPasswordRecoveryRepository implements PasswordRecoveryRepositoryIn
         protected PasswordRecoveryToken $model
     ) {}
 
-    public function createToken(string $userId)
+    public function createToken(string $userId, string $token, CarbonInterface $expiresAt): PasswordRecoveryToken
     {
-        $newToken = Str::random(64);
-        $expiresAt = now()->addHours(72);
-
         return $this->model->create([
             'user_id' => $userId,
-            'token' => $newToken,
+            'token' => $token,
             'expires_at' => $expiresAt,
             'created_at' => now(),
         ]);
     }
 
-    public function findValidToken(string $token)
+    public function findByToken(string $token): ?PasswordRecoveryToken
     {
-        return $this->model->where('token', $token)
-            ->whereNull('used_at')
-            ->where('expires_at', '>', now())
-            ->first();
+        return $this->model->where('token', $token)->first();
     }
 
-    public function invalidateToken(string $token)
+    public function markAsUsed(PasswordRecoveryToken $token): PasswordRecoveryToken
     {
-        $tokenToInvalidate = $this->findValidToken($token);
-        if ($tokenToInvalidate) {
-            $tokenToInvalidate->update([
-                'used_at' => now(),
-            ]);
-        }
+        $token->update([
+            'used_at' => now(),
+        ]);
 
-        return $tokenToInvalidate;
+        return $token;
     }
 }

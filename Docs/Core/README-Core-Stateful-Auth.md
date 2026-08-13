@@ -107,3 +107,25 @@ Ao lidar com CORS e Sessões, alguns erros clássicos podem ocorrer:
 
 1. **Transição de Sessão para Redis:** Atualmente, o driver de sessão (`SESSION_DRIVER`) está configurado para `database`. Ao escalar o projeto, a tabela de sessões pode gerar estrangulamento (I/O Bottleneck). Migrar para o Redis (`SESSION_DRIVER=redis`) reduzirá drasticamente o tempo de resposta.
 2. **Rotação Automática de CSRF:** Pode ser implementado um mecanismo que atualize proativamente o *cookie* CSRF se o frontend permanecer com uma aba aberta inativa durante muito tempo, evitando falhas silenciosas na primeira requisição após inatividade.
+
+---
+
+## 7. Recuperação de Senha
+
+O módulo de autenticação também inclui o fluxo público de recuperação de senha, organizado em duas rotas:
+
+* `POST /api/v1/auth/password/forgot`
+* `POST /api/v1/auth/password/reset`
+
+### Comportamento esperado
+
+* O endpoint `forgot` recebe apenas `email` e responde com a mesma mensagem tanto para e-mails existentes quanto inexistentes, evitando *user enumeration*.
+* Quando o e-mail existe, o backend cria um `PasswordRecoveryToken` com expiração de 10 minutos e dispara um job de envio de e-mail de forma assíncrona.
+* O endpoint `reset` recebe `token`, `password` e `password_confirmation`, valida o token e troca a senha dentro de uma transação.
+* O token é de uso único: após o reset, `used_at` é preenchido e o mesmo token deixa de ser aceito.
+
+### Observações de implementação
+
+* A lógica fica concentrada em service e jobs, para evitar controllers gordos.
+* O fluxo não exige alteração nas tabelas existentes; ele reutiliza o model `PasswordRecoveryToken` já disponível no backend.
+* Em ambiente Sail, o envio assíncrono pressupõe queue em Redis e um worker ativo para processar os jobs de e-mail.

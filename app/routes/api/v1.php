@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\Analytics\V1\Tracking\TrackController;
+use App\Http\Controllers\Api\Auth\V1\PasswordRecoveryController;
 use App\Http\Controllers\Api\Landing\Leads\V1\LeadsController;
 use App\Http\Controllers\Api\Security\V1\CaptchaController;
 use Illuminate\Support\Facades\Response;
@@ -51,6 +52,13 @@ Route::prefix('landing')->group(function () {
  * Gerenciamento de sessões e autenticação via Laravel Sanctum (Stateful).
  */
 Route::prefix('auth')->group(function () {
+    Route::prefix('password')->group(function () {
+        Route::post('/forgot', [PasswordRecoveryController::class, 'forgot'])
+            ->name('auth.password.forgot');
+
+        Route::post('/reset', [PasswordRecoveryController::class, 'reset'])
+            ->name('auth.password.reset');
+    });
 
     // Rotas protegidas (exigem cookie de sessão válido do Sanctum)
     Route::middleware('auth:sanctum')->group(function () {
