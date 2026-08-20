@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\Admin\PlanTierController;
 use App\Http\Controllers\Api\Analytics\V1\Overview\OverviewController;
 use App\Http\Controllers\Api\Analytics\V1\Tracking\TrackController;
 use App\Http\Controllers\Api\Audit\V1\LogsController;
@@ -16,8 +17,22 @@ use Illuminate\Support\Facades\Route;
  * * @author Luan Quevedo
  */
 
+
 // ─── GRUPO 1: ROTAS PÚBLICAS (Sessão, Cookies e CSRF Ativos) ─────────────────────────
 Route::middleware(['web'])->group(function () {
+
+// Sub-módulo: admin
+//Apos existir painel ADMIN é sera necessario separar em 2 grupos um com necessidade de autenticação por credenciais e outro publico.
+    Route::prefix('admin')->group(function () {
+        // Sub-módulo: Planos
+        Route::prefix('plan-tiers')->group(function () {
+            Route::get('/', [PlanTierController::class, 'index']);
+            Route::get('/{id}', [PlanTierController::class, 'show']);
+            Route::post('/', [PlanTierController::class, 'store']);
+            Route::put('/{id}', [PlanTierController::class, 'update']);
+            Route::patch('/{id}/status', [PlanTierController::class, 'toggleStatus']);
+        });
+    });
 
     // Sub-módulo: Autenticação Inicial
     Route::prefix('auth')->group(function () {
@@ -69,4 +84,5 @@ Route::middleware(['web', 'auth:sanctum'])->group(function () {
         Route::get('/', [LogsController::class, 'index'])
             ->name('logs.index');
     });
+
 });
