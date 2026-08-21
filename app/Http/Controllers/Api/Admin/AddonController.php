@@ -16,7 +16,7 @@ class AddonController extends Controller
         private readonly AddonManagementService $addonService
     ) {
     }
-
+//1
     public function index()
     {
         $addons = AddOn::orderBy('label', 'asc')->get();
