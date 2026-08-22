@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\Auth\LoginController;
 use App\Http\Controllers\Api\Auth\RegisterController;
 use App\Http\Controllers\Api\Landing\Leads\V1\LeadsController;
 use App\Http\Controllers\Api\Security\V1\CaptchaController;
+use App\Http\Controllers\Api\Guest\V1\InviteController;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Route;
 
@@ -44,6 +45,14 @@ Route::middleware(['web'])->group(function () {
             ->middleware('captcha.check:leads_landing')
             ->name('landing.leads');
     });
+
+    /*
+    Módulo de Convites
+    */
+    Route::prefix('invite')->middleware(['guest'])->group(function(){
+        Route::post('/createrInviteRegister',[InviteController::class, 'createrInvite'])->middleware(['signed'])->name('invite.generater');
+        Route::get('/validateToken/{token}',[InviteController::class, 'validateToken'])->name('invite.validing');
+    });
 });
 
 // ─── GRUPO 2: ROTAS PROTEGIDAS (Exigem Autenticação via Sessão/Sanctum) ───────────────
@@ -68,5 +77,12 @@ Route::middleware(['web', 'auth:sanctum'])->group(function () {
 
         Route::get('/', [LogsController::class, 'index'])
             ->name('logs.index');
+    });
+
+    /*
+    Módulo de Convites
+    */
+    Route::prefix('invite')->middleware(['guest'])->group(function(){
+        Route::post('/PreRegister',[InviteController::class, 'createrPreRegistration'])->name('invite.forms');
     });
 });
