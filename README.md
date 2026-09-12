@@ -81,6 +81,8 @@ php artisan serve
 * 
 **Autenticação Stateful para SPA:** Utiliza cookies HTTP-Only no lugar de Bearer Tokens tradicionais, mitigando riscos de roubo de credenciais via XSS.
 
+* **Recuperação de Senha:** O fluxo público de `forgot`/`reset` usa o model `PasswordRecoveryToken`, com expiração curta, uso único e envio assíncrono de e-mail via jobs.
+
 
 * **Defesa em Camadas contra Bots:** Os formulários públicos utilizam *Honeypots* invisíveis, validação de tempo mínimo de preenchimento e um sistema de Captcha visual de processamento em memória, consumido de forma atômica (`Cache::pull`).
 * **Ingestão Otimizada (Tracking):** Endpoint de telemetria que recebe eventos em lote (batching) e garante idempotência, mitigando sobrecarga no banco de dados.
@@ -95,6 +97,10 @@ O desenvolvimento do **RHdPeople API** segue em ritmo acelerado. As próximas en
 - [x] **Módulo de Autenticação e Registro**
   - Implementado e documentado em `/Docs/Core/README-Auth.md`.
   - O roadmap detalhado deste módulo passou a ser mantido exclusivamente em sua documentação específica.
+
+* [x] **Recuperação de Senha:**
+* Endpoints públicos `POST /api/v1/auth/password/forgot` e `POST /api/v1/auth/password/reset` implementados com `PasswordRecoveryToken`, requests dedicados, service e jobs assíncronos.
+* O fluxo mantém o contrato de segurança do projeto: não expõe se o e-mail existe e valida expiração/uso único do token.
 
 
 * [ ] **Integração de Leads (Database):**
