@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\Auth\LoginController;
 use App\Http\Controllers\Api\Auth\RegisterController;
 use App\Http\Controllers\Api\Landing\Leads\V1\LeadsController;
 use App\Http\Controllers\Api\Security\V1\CaptchaController;
+use App\Http\Controllers\Api\Auth\V1\PasswordRecoveryController;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Route;
 
@@ -23,6 +24,13 @@ Route::middleware(['web'])->group(function () {
     Route::prefix('auth')->group(function () {
         Route::post('/register', [RegisterController::class, 'store']);
         Route::post('/login', [LoginController::class, 'store']);
+        Route::prefix('password')->group(function () {
+            Route::post('/forgot', [PasswordRecoveryController::class, 'forgot'])
+                ->name('auth.password.forgot');
+
+            Route::post('/reset', [PasswordRecoveryController::class, 'reset'])
+                ->name('auth.password.reset');
+        });
     });
 
     // Sub-módulo: Security
