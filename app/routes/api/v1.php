@@ -8,9 +8,10 @@ use App\Http\Controllers\Api\Analytics\V1\Tracking\TrackController;
 use App\Http\Controllers\Api\Audit\V1\LogsController;
 use App\Http\Controllers\Api\Auth\LoginController;
 use App\Http\Controllers\Api\Auth\RegisterController;
+use App\Http\Controllers\Api\Auth\V1\PasswordRecoveryController;
+use App\Http\Controllers\Api\Guest\V1\InviteController;
 use App\Http\Controllers\Api\Landing\Leads\V1\LeadsController;
 use App\Http\Controllers\Api\Security\V1\CaptchaController;
-use App\Http\Controllers\Api\Auth\V1\PasswordRecoveryController;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Route;
 
@@ -86,6 +87,14 @@ Route::middleware(['web'])->group(function () {
             ->middleware('captcha.check:leads_landing')
             ->name('landing.leads');
     });
+
+    /*
+    Módulo de Convites
+    */
+    Route::prefix('invite')->middleware(['guest'])->group(function () {
+        Route::post('/createrInviteRegister', [InviteController::class, 'createrInvite'])->middleware(['signed'])->name('invite.generater');
+        Route::get('/validateToken/{token}', [InviteController::class, 'validateToken'])->name('invite.validing');
+    });
 });
 
 // ─── GRUPO 2: ROTAS PROTEGIDAS (Exigem Autenticação via Sessão/Sanctum) ───────────────
@@ -93,6 +102,9 @@ Route::middleware(['web', 'auth:sanctum'])->group(function () {
 
     // Revogação de Acesso
     Route::post('/auth/logout', [LoginController::class, 'destroy']);
+    Route::prefix('invite')->middleware(['guest'])->group(function () {
+        Route::post('/PreRegister', [InviteController::class, 'createrPreRegistration'])->name('invite.forms');
+    });
 
     // Sub-módulo: Analytics (Limitador de taxa aplicado no nível do prefixo)
     Route::prefix('analytics')->middleware('throttle:tracking')->group(function () {

@@ -27,6 +27,9 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(LeadsStore::class, function ($app) {
     return new InMemoryLeadsStore();
 });
+        $this->app->bind(PHPMailer::class, function ($app) {
+            return new PHPMailer(true);
+    });
     }
 
     public function boot(): void
