@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\Api\Admin\AddonController;
+use App\Http\Controllers\Api\Admin\ModuleController;
+use App\Http\Controllers\Api\Admin\PlanTierController;
 use App\Http\Controllers\Api\Analytics\V1\Overview\OverviewController;
 use App\Http\Controllers\Api\Analytics\V1\Tracking\TrackController;
 use App\Http\Controllers\Api\Audit\V1\LogsController;
@@ -19,6 +22,37 @@ use Illuminate\Support\Facades\Route;
 
 // ─── GRUPO 1: ROTAS PÚBLICAS (Sessão, Cookies e CSRF Ativos) ─────────────────────────
 Route::middleware(['web'])->group(function () {
+
+// Sub-módulo: admin
+//Apos existir painel ADMIN é sera necessario separar em 2 grupos um com necessidade de autenticação por credenciais e outro publico.
+    Route::prefix('admin')->group(function () {
+        // ─── PLAN TIERS (Prateleira de Planos) ────────────────────────
+        Route::prefix('plan-tiers')->group(function () {
+            Route::get('/', [PlanTierController::class, 'index']);
+            Route::get('/{id}', [PlanTierController::class, 'show']);
+            Route::post('/', [PlanTierController::class, 'store']);
+            Route::put('/{id}', [PlanTierController::class, 'update']);
+            Route::patch('/{id}/status', [PlanTierController::class, 'toggleStatus']);
+        });
+
+        // ─── MODULES (Catálogo de Módulos) ────────────────────────────
+        Route::prefix('modules')->group(function () {
+            Route::get('/', [ModuleController::class, 'index']);
+            Route::get('/{id}', [ModuleController::class, 'show']);
+            Route::post('/', [ModuleController::class, 'store']);
+            Route::put('/{id}', [ModuleController::class, 'update']);
+            Route::patch('/{id}/status', [ModuleController::class, 'toggleStatus']);
+        });
+
+        // ─── ADD-ONS (Catálogo de Adicionais) ─────────────────────────
+        Route::prefix('add-ons')->group(function () {
+            Route::get('/', [AddonController::class, 'index']);
+            Route::get('/{id}', [AddonController::class, 'show']);
+            Route::post('/', [AddonController::class, 'store']);
+            Route::put('/{id}', [AddonController::class, 'update']);
+            Route::patch('/{id}/status', [AddonController::class, 'toggleStatus']);
+        });
+    });
 
     // Sub-módulo: Autenticação Inicial
     Route::prefix('auth')->group(function () {
@@ -77,4 +111,5 @@ Route::middleware(['web', 'auth:sanctum'])->group(function () {
         Route::get('/', [LogsController::class, 'index'])
             ->name('logs.index');
     });
+
 });
