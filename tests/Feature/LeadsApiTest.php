@@ -111,25 +111,27 @@ class LeadsApiTest extends TestCase
             ->assertJsonStructure(['errors' => ['form_started_at']]);
     }
 
-    private LeadsStore $store;
-
     protected function setUp(): void
     {
         parent::setUp();
         \Illuminate\Support\Facades\Cache::flush();
+
+        $this->mock(\App\Repositories\Contracts\LeadRepositoryInterface::class, function ($mock) {
+            $mock->shouldReceive('updateOrCreateLead')
+                ->byDefault()
+                ->andReturn((object) ['id' => 123, 'name' => 'Default Lead']);
+        });
     }
 
     public function test_1_1_valid_submission_is_successful_and_persisted(): void
     {
-        // A mágica acontece aqui: o mock() substitui a dependência no container
-        // garantindo que, quando o Controller for instanciado, ele receba este mock.
-        $this->mock(\App\Domain\Landing\LeadsStore::class, function ($mock) {
-            $mock->shouldReceive('create')
+        $this->mock(\App\Repositories\Contracts\LeadRepositoryInterface::class, function ($mock) {
+            $mock->shouldReceive('updateOrCreateLead')
                 ->once()
-                ->with(\Mockery::on(function ($lead) {
+                ->with(\Mockery::any(), \Mockery::on(function ($lead) {
                     return $lead['name'] === 'Joao Silva';
                 }))
-                ->andReturn(['id' => 123, 'name' => 'Joao Silva']);
+                ->andReturn((object) ['id' => 123, 'name' => 'Joao Silva']);
         });
 
         $ip    = '127.0.0.1';
@@ -149,7 +151,7 @@ class LeadsApiTest extends TestCase
     }
     public function test_1_2_honeypot_is_silently_blocked_without_persisting(): void
     {
-        $spy   = $this->spy(\App\Domain\Landing\LeadsStore::class);
+        $spy   = $this->spy(\App\Repositories\Contracts\LeadRepositoryInterface::class);
         $token = 'honeypot-token-' . uniqid();
         Cache::put("validated_action:{$token}", [
             'session_id'  => session()->getId(),
@@ -169,13 +171,13 @@ class LeadsApiTest extends TestCase
             ->assertJsonPath('success', false)
             ->assertJsonStructure(['errors' => ['website']]);
 
-        // Verificação via Mockery: Garante que 'create' NUNCA foi chamado
-        $spy->shouldNotHaveReceived('create');
+        // Verificação via Mockery: Garante que 'updateOrCreateLead' NUNCA foi chamado
+        $spy->shouldNotHaveReceived('updateOrCreateLead');
     }
 
     public function test_1_3_time_trap_is_silently_blocked_for_too_fast_and_too_old(): void
     {
-        $spy = $this->spy(\App\Domain\Landing\LeadsStore::class);
+        $spy = $this->spy(\App\Repositories\Contracts\LeadRepositoryInterface::class);
         // Primeira requisição: Token único
         $tokenFast      = $this->getValidToken();
         $tooFastPayload = $this->validPayload([
@@ -201,8 +203,8 @@ class LeadsApiTest extends TestCase
         $oldResponse->assertStatus(422)
             ->assertJsonStructure(['errors' => ['form_started_at']]);
 
-        // Verificação via Mockery: Garante que 'create' NUNCA foi chamado
-        $spy->shouldNotHaveReceived('create');
+        // Verificação via Mockery: Garante que 'updateOrCreateLead' NUNCA foi chamado
+        $spy->shouldNotHaveReceived('updateOrCreateLead');
     }
     public function test_1_4_rate_limiting_returns_429_on_11th_request(): void
     {
@@ -244,6 +246,33 @@ class LeadsApiTest extends TestCase
             ]);
     }
 
+    public function test_it_returns_409_when_lead_is_submitted_twice_within_cache_ttl(): void
+    {
+        $this->mock(\App\Repositories\Contracts\LeadRepositoryInterface::class, function ($mock) {
+            $mock->shouldReceive('updateOrCreateLead')
+                ->once()
+                ->andReturn((object) ['id' => 123]);
+        });
+
+        $email = 'duplicate-' . uniqid() . '@gmail.com';
+        $payload1 = $this->validPayload([
+            'corporate_email'  => $email,
+            'validation_token' => $this->getValidToken(),
+        ]);
+
+        $res1 = $this->postJson('/api/v1/landing/leads', $payload1);
+        $res1->assertStatus(201);
+
+        $payload2 = $this->validPayload([
+            'corporate_email'  => $email,
+            'validation_token' => $this->getValidToken(),
+        ]);
+
+        $res2 = $this->postJson('/api/v1/landing/leads', $payload2);
+        $res2->assertStatus(409)
+            ->assertJsonPath('message', 'Lead already submitted recently');
+    }
+
     private function validPayload(array $overrides = []): array
     {
         return array_replace_recursive([
@@ -251,7 +280,7 @@ class LeadsApiTest extends TestCase
             'company_name'     => 'ACME LTDA',
             'corporate_email'  => 'qa-' . uniqid() . '@gmail.com',
             'phone'            => '11999999999',
-            'number_employees' => 25,
+            'employee_range'   => '11-50',
             'objective'        => [
                 'time_tracking' => false,
                 'vacation'      => false,
@@ -262,23 +291,5 @@ class LeadsApiTest extends TestCase
             'form_started_at'  => now()->subMinutes(5)->timestamp,
             'website'          => '',
         ], $overrides);
-    }
-}
-
-class SpyLeadsStore implements LeadsStore
-{
-    /** @var array<int, array<string, mixed>> */
-    public array $created = [];
-
-    public function create(array $lead): array
-    {
-        $this->created[] = $lead;
-
-        return array_merge(['id' => count($this->created)], $lead);
-    }
-
-    public function all(): array
-    {
-        return $this->created;
     }
 }
