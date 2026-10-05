@@ -17,11 +17,15 @@ class Lead extends Model
         'email',
         'phone',
         'status',
+        'employee_range',
+        'challenge',
+        'company_name',
         'last_field_filled',
         'converted_at',
     ];
 
     protected $casts = [
+        'challenge' => 'array',
         'converted_at' => 'datetime',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',

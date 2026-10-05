@@ -21,6 +21,9 @@ class EloquentLeadRepository implements LeadRepositoryInterface
                 'phone' => $data['phone'] ?? null,
                 'last_field_filled' => $data['last_field_filled'] ?? null,
                 'status' => $data['status'] ?? 'draft',
+                'company_name' => $data['company_name'] ?? null,
+                'employee_range'=> $data['employee_range'] ?? "0",
+                'challenge' => $data['challenge'] ?? null,
             ]
         );
     }
