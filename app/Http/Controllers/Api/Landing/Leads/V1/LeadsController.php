@@ -1,37 +1,22 @@
 <?php
 namespace App\Http\Controllers\Api\Landing\Leads\V1;
 
-use App\Domain\Landing\LeadsStore;
+use App\Exceptions\DuplicateLeadException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Landing\Leads\V1\LeadsRequest;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Log;
+use App\Services\Landing\LeadManagementService;
 use Illuminate\Support\Facades\Response;
 
 class LeadsController extends Controller
 {
-    public function store(LeadsRequest $request, LeadsStore $store)
+    public function store(LeadsRequest $request, LeadManagementService $service)
     {
-        $payload = $request->validated();
-        $email   = (string) ($payload['corporate_email'] ?? '');
-        $key     = 'leads:dedupe:email' . sha1($email);
+        try {
+            $lead = $service->registerLead($request->validated(), $request->ip());
 
-        if (Cache::has($key)) {
-            return Response::api(null, 'Lead already submitted recently', 409);
+            return Response::api($lead, 'Lead created', 201);
+        } catch (DuplicateLeadException $e) {
+            return Response::api(null, $e->getMessage(), 409);
         }
-        Cache::put($key, true, now()->addHour());
-        // log apenas para finalidade de desenvolvimento.
-        Log::info('leads.demo_requested', [
-            'name'            => $payload['name'] ?? null,
-            'company_name'    => $payload['company_name'] ?? null,
-            'corporate_email' => $payload['corporate_email'] ?? null,
-            'phone'           => $payload['phone'] ?? null,
-            'modules'         => $payload['objective'] ?? null,
-            'employees'       => $payload['number_employees'] ?? null,
-            'ip'              => $request->ip(),
-        ]);
-        $result = $store->create($payload);
-
-        return Response::api($result, 'Lead created', 201);
     }
 }

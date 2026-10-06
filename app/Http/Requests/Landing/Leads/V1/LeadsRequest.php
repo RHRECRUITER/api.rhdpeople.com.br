@@ -20,19 +20,22 @@ class LeadsRequest extends PublicFormRequest
     protected function prepareForValidation(): void
     {
         $modules = $this->input('objective', []);
-        if (! is_array($modules)) {
-            $modules = [];
+        if (is_array($modules)) {
+            $defaults = array_fill_keys(self::MODULES, false);
+            $modules = array_replace($defaults, $modules);
         }
-        // filtra todos os arrays para que os mesmos estejam como padrão inicial false
-        $defaults = array_fill_keys(self::MODULES, false);
+
+        $corporateEmail = $this->input('corporate_email', $this->input('email'));
+        $employeeRange = $this->input('employee_range', $this->input('number_employees'));
 
         $this->merge([
             'name' => is_string($this->input('name')) ? preg_replace('/\s+/', ' ', trim($this->input('name'))) : $this->input('name'),
             'company_name' => is_string($this->input('company_name')) ? preg_replace('/\s+/', ' ', trim($this->input('company_name'))) : $this->input('company_name'),
-            'corporate_email' => is_string($this->input('corporate_email')) ? mb_strtolower(trim($this->input('corporate_email'))) : $this->input('corporate_email'),
+            'corporate_email' => is_string($corporateEmail) ? mb_strtolower(trim($corporateEmail)) : $corporateEmail,
+            'email' => is_string($corporateEmail) ? mb_strtolower(trim($corporateEmail)) : $corporateEmail,
             'phone' => is_string($this->input('phone')) ? preg_replace('/\D+/', '', $this->input('phone')) : $this->input('phone'),
-            'number_employees' => $this->input('number_employees') !== null ? (int) $this->input('number_employees') : null,
-            'objective' => array_replace($defaults, $modules),
+            'employee_range' => is_scalar($employeeRange) ? (string) $employeeRange : null,
+            'objective' => $modules,
             'form_started_at' => $this->input('form_started_at') !== null ? (int) $this->input('form_started_at') : null,
             'website' => is_string($this->input('website')) ? trim($this->input('website')) : '',
         ]);
@@ -43,24 +46,29 @@ class LeadsRequest extends PublicFormRequest
     {
 
         $validator->after(function (Validator $validator) {
-            $modules = (array) $this->input('objective', []);
+            $objective = $this->input('objective');
 
-            $extra = array_diff(array_keys($modules), self::MODULES);
-            foreach ($extra as $key) {
-                $validator->errors()->add("objective.$key", 'Module not allowed.');
-            }
-
-            $anyTrue = false;
-            foreach (self::MODULES as $key) {
-                if (($modules[$key] ?? false) === true) {
-                    $anyTrue = true;
-                    break;
+            if (is_array($objective)) {
+                $extra = array_diff(array_keys($objective), self::MODULES);
+                foreach ($extra as $key) {
+                    $validator->errors()->add("objective.$key", 'Module not allowed.');
                 }
+
+                $anyTrue = false;
+                foreach (self::MODULES as $key) {
+                    if (($objective[$key] ?? false) === true) {
+                        $anyTrue = true;
+                        break;
+                    }
+                }
+
+                if (! $anyTrue) {
+                    $validator->errors()->add('objective', 'Select at least one module.');
+                }
+            } elseif (is_string($objective) && trim($objective) === '') {
+                $validator->errors()->add('objective', 'The objective field is required.');
             }
 
-            if (! $anyTrue) {
-                $validator->errors()->add('objective', 'Select at least one module.');
-            }
             $startedAt = (int) $this->input('form_started_at', 0);
             $now = now()->timestamp;
             $elapsed = $now - $startedAt;
@@ -84,13 +92,16 @@ class LeadsRequest extends PublicFormRequest
             'company_name' => ['required', 'string', 'min:2', 'max:255'],
             'corporate_email' => ['required', 'string', 'email:rfc,dns', 'max:255'],
             'phone' => ['required', 'string', 'regex:/^\d{9,13}$/'],
-            'number_employees' => ['required', 'integer', 'min:1'],
-            'objective' => ['required', 'array'],
+            'employee_range' => ['required', 'string', 'max:100'],
+            'objective' => ['required'],
             'form_started_at' => ['required', 'integer'],
             'website' => ['present', 'string', 'max:0'], // honeypot: deve existir e permanecer vazio (para bots preencher).
         ];
-        foreach (self::MODULES as $module) {
-            $rules["objective.$module"] = ['required', 'boolean'];
+
+        if (is_array($this->input('objective'))) {
+            foreach (self::MODULES as $module) {
+                $rules["objective.$module"] = ['required', 'boolean'];
+            }
         }
 
         return $rules;

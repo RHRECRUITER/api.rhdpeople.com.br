@@ -2,8 +2,6 @@
 
 namespace App\Providers;
 
-use App\Domain\Landing\LeadsStore;
-use App\Infrastructure\Landing\InMemoryLeadsStore;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
@@ -24,12 +22,9 @@ class AppServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        $this->app->bind(LeadsStore::class, function ($app) {
-    return new InMemoryLeadsStore();
-});
         $this->app->bind(PHPMailer::class, function ($app) {
             return new PHPMailer(true);
-    });
+        });
     }
 
     public function boot(): void
