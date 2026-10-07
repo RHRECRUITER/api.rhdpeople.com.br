@@ -1,0 +1,81 @@
+name: CI API RHDPeople
+
+on:
+  push:
+    branches: [ "develop", "staging", "main" ]
+  pull_request:
+    branches: [ "develop", "staging", "main" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: rhdpeople_test
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+      redis:
+        image: redis:alpine
+        ports:
+          - 6379:6379
+
+    steps:
+    - name: Checkout do código
+      uses: actions/checkout@v4
+
+    - name: Configurar PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.3'
+        extensions: mbstring, dom, fileinfo, pdo_mysql, zip, redis
+        coverage: none
+
+    - name: Cache das dependências do Composer
+      uses: actions/cache@v3
+      with:
+        path: vendor
+        key: composer-${{ hashFiles('**/composer.lock') }}
+        restore-keys: |
+          composer-
+
+    - name: Copiar .env de teste
+      run: cp .env.example .env
+
+    - name: Instalar Dependências (Composer)
+      run: composer install --no-interaction --prefer-dist --optimize-autoloader
+
+    - name: Gerar App Key e Ajustar Permissões
+      run: |
+        php artisan key:generate
+        chmod -R 777 storage bootstrap/cache
+
+    - name: Verificar vulnerabilidades (Composer Audit)
+      run: composer audit --locked
+
+    - name: Checar padronização de código (Laravel Pint)
+      run: ./vendor/bin/pint --test
+
+    # Análise estática pegando bugs lógicos estruturais
+    - name: Análise Estática de Código (Larastan)
+      run: ./vendor/bin/phpstan analyse --memory-limit=2G
+
+    # Execução em paralelo com variáveis de isolamento
+    - name: Rodar Suíte de Testes (Migrar e Testar)
+      run: php artisan test --parallel
+      env:
+        DB_CONNECTION: mysql
+        DB_HOST: 127.0.0.1
+        DB_PORT: 3306
+        DB_DATABASE: rhdpeople_test
+        DB_USERNAME: root
+        DB_PASSWORD: root
+        CACHE_STORE: redis
+        REDIS_HOST: 127.0.0.1
+        QUEUE_CONNECTION: sync
+        MAIL_MAILER: array
