@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api\Admin;
 
-use App\DTOs\Admin\AddOnDTO;
+use App\DTOs\Admin\AddonDTO;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Addon\StoreAddonRequest;
 use App\Http\Requests\Admin\Addon\UpdateAddonRequest;
@@ -34,7 +34,7 @@ class AddonController extends Controller
     public function store(StoreAddonRequest $request)
     {
         // Certifique-se de ter renomeado a classe para AddOnDTO com "A" maiúsculo
-        $dto   = AddOnDTO::fromRequest($request);
+        $dto   = AddonDTO::fromRequest($request);
         $addon = $this->addonService->createAddon($dto);
 
         return Response::api(['add_on' => $addon], 'Add-on criado com sucesso.', 201);
@@ -42,9 +42,9 @@ class AddonController extends Controller
 
     public function update(UpdateAddonRequest $request, string $id)
     {
-        $dto   = AddOnDTO::fromRequest($request);
+        $dto   = AddonDTO::fromRequest($request);
         // Lembre-se de corrigir o nome do método lá no Service para updateAddOn!
-        $addon = $this->addonService->updateAddOn($id, $dto);
+        $addon = $this->addonService->updateAddon($id, $dto);
 
         return Response::api(['add_on' => $addon], 'Add-on atualizado com sucesso.');
     }

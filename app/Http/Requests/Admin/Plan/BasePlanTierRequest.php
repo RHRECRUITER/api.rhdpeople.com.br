@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\Admin\plan;
+namespace App\Http\Requests\Admin\Plan;
 
 use App\Http\Requests\Base\PublicFormRequest;
 

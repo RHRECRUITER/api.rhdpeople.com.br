@@ -1,7 +1,7 @@
 <?php
-namespace App\Http\Requests\Admin\plan;
+namespace App\Http\Requests\Admin\Plan;
 
-use App\Http\Requests\Admin\plan\BasePlanTierRequest;
+use App\Http\Requests\Admin\Plan\BasePlanTierRequest;
 
 class UpdatePlanTierRequest extends BasePlanTierRequest
 {

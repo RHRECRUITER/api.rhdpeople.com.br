@@ -1,7 +1,7 @@
 <?php
 namespace App\Http\Requests\Admin\Addon;
 
-use app\Http\Requests\Admin\Addon\BaseAddonRequest;
+use App\Http\Requests\Admin\Addon\BaseAddonRequest;
 
 class UpdateAddonRequest extends BaseAddonRequest
 {

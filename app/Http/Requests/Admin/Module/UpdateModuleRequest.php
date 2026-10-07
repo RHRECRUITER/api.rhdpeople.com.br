@@ -1,7 +1,7 @@
 <?php
 namespace App\Http\Requests\Admin\Module;
 
-use app\Http\Requests\Admin\Module\BaseModuleRequest;
+use App\Http\Requests\Admin\Module\BaseModuleRequest;
 
 class UpdateModuleRequest extends BaseModuleRequest
 {

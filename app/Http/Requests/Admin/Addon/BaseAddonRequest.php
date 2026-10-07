@@ -1,7 +1,7 @@
 <?php
 namespace App\Http\Requests\Admin\Addon;
 
-use app\Http\Requests\Base\PublicFormRequest;
+use App\Http\Requests\Base\PublicFormRequest;
 use Illuminate\Validation\Rule;
 
 abstract class BaseAddonRequest extends PublicFormRequest
@@ -17,7 +17,7 @@ abstract class BaseAddonRequest extends PublicFormRequest
             ],
             'label'       => ['string', 'max:255'],
             'description' => ['nullable', 'string'],
-            'extra_price' => ['nullable', 'numeric', 'min:0'],
+            'price'       => ['nullable', 'numeric', 'min:0'],
             'is_active'   => ['boolean'],
         ];
     }

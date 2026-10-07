@@ -1,23 +1,23 @@
 <?php
 namespace App\Services\Admin;
 
-use app\DTOs\Admin\addonDTO;
-use app\Models\AddOn;
+use App\DTOs\Admin\AddonDTO;
+use App\Models\AddOn;
 
 class AddonManagementService
 {
-    public function createAddon(addonDTO $dto): AddOn
+    public function createAddon(AddonDTO $dto): AddOn
     {
         $addon = AddOn::create([
             'key'         => $dto->key,
             'label'       => $dto->label,
             'description' => $dto->description,
-            'extra_price' => $dto->extraPrice,
+            'price'       => $dto->price,
             'is_active'   => $dto->isActive,
         ]);
         return $addon;
     }
-    public function updateModule(string $id, addonDTO $dto): AddOn
+    public function updateAddon(string $id, AddonDTO $dto): AddOn
     {
 
         $addon = AddOn::findOrFail($id);
@@ -26,7 +26,7 @@ class AddonManagementService
             'key'         => $dto->key,
             'label'       => $dto->label,
             'description' => $dto->description,
-            'extra_price' => $dto->extraPrice,
+            'price'       => $dto->price,
             'is_active'   => $dto->isActive,
         ], fn($v) => ! is_null($v)));
 

@@ -1,7 +1,7 @@
 <?php
 namespace App\Http\Requests\Admin\Module;
 
-use app\Http\Requests\Base\PublicFormRequest;
+use App\Http\Requests\Base\PublicFormRequest;
 use Illuminate\Validation\Rule;
 
 abstract class BaseModuleRequest extends PublicFormRequest
