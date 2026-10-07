@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Parental\HasChildren;
 
-class SysLog extends Model
+class Syslog extends Model
 {
     use HasChildren, BelongsToTenant;
 

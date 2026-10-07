@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Repositories\Eloquent;
+namespace App\Repositories\Eloquent\Syslog;
 
 use App\Models\Syslog\WebhookLog;
 use App\Repositories\Contracts\Syslog\WebhookLogRepositoryInterface;
