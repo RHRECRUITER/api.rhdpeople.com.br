@@ -45,7 +45,7 @@ jobs:
           composer-
 
     - name: Copiar .env de teste
-      run: cp .env.example .env
+      run: cp .env.production.example .env
 
     - name: Instalar Dependências (Composer)
       run: composer install --no-interaction --prefer-dist --optimize-autoloader
