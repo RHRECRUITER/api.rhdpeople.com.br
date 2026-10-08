@@ -36,8 +36,8 @@ use Symfony\Component\HttpKernel\Exception\UnsupportedMediaTypeHttpException;
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
 
-        api: __DIR__ . '/../app/routes/api.php',
-        commands: __DIR__ . '/../app/routes/console.php',
+        api: __DIR__.'/../app/routes/api.php',
+        commands: __DIR__.'/../app/routes/console.php',
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
@@ -53,7 +53,7 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withExceptions(function (Exceptions $exceptions) {
         // Consideramos API qualquer request que comece com "/api/".
-        $isApi = fn(Request $request) => $request->is('api/*');
+        $isApi = fn (Request $request) => $request->is('api/*');
 
         // Helper para montar a resposta de erro com o contrato padrão.
         $apiError = function (
@@ -64,8 +64,8 @@ return Application::configure(basePath: dirname(__DIR__))
             return response()->json([
                 'success' => false,
                 'message' => $message,
-                'data'    => null,
-                'meta'    => ['timestamp' => now()->toIso8601String()],
+                'data' => null,
+                'meta' => ['timestamp' => now()->toIso8601String()],
             ] + $extra, $status);
         };
 
@@ -158,9 +158,9 @@ return Application::configure(basePath: dirname(__DIR__))
 
             return $apiError(429, 'Too many requests', [
                 'meta' => array_filter([
-                    'timestamp'   => now()->toIso8601String(),
+                    'timestamp' => now()->toIso8601String(),
                     'retry_after' => $retryAfter,
-                ], fn($v) => $v !== null),
+                ], fn ($v) => $v !== null),
             ]);
         });
 
@@ -179,6 +179,7 @@ return Application::configure(basePath: dirname(__DIR__))
                 return null;
             }
             $msg = config('app.debug') ? $e->getMessage() : 'Internal server error';
+
             return $apiError(500, $msg);
         });
 
@@ -189,10 +190,10 @@ return Application::configure(basePath: dirname(__DIR__))
             }
 
             $message = config('app.debug') ? $e->getMessage() : 'Internal server error';
-            $extra   = config('app.debug') ? [
+            $extra = config('app.debug') ? [
                 'exception' => get_class($e),
-                'file'      => $e->getFile(),
-                'line'      => $e->getLine(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
             ] : [];
 
             return $apiError(500, $message, $extra);

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Api\Admin;
 
 use App\DTOs\Admin\ModuleDTO;
@@ -13,8 +14,7 @@ class ModuleController extends Controller
 {
     public function __construct(
         private readonly ModuleManagementService $moduleService
-    ) {
-    }
+    ) {}
 
     public function index()
     {
@@ -32,7 +32,7 @@ class ModuleController extends Controller
 
     public function store(StoreModuleRequest $request)
     {
-        $dto    = ModuleDTO::fromRequest($request);
+        $dto = ModuleDTO::fromRequest($request);
         $module = $this->moduleService->createModule($dto);
 
         return Response::api(['module' => $module], 'Módulo criado.', 201);
@@ -40,7 +40,7 @@ class ModuleController extends Controller
 
     public function update(UpdateModuleRequest $request, string $id)
     {
-        $dto    = ModuleDTO::fromRequest($request);
+        $dto = ModuleDTO::fromRequest($request);
         $module = $this->moduleService->updateModule($id, $dto);
 
         return Response::api(['module' => $module], 'Módulo atualizado.');

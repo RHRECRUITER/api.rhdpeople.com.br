@@ -6,19 +6,20 @@ use App\Models\Company;
 use App\Models\User;
 use App\Traits\BelongsToTenant;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Parental\HasChildren;
 
 class Syslog extends Model
 {
-    use HasChildren, BelongsToTenant;
+    use BelongsToTenant, HasChildren;
 
     protected $connection = 'conn_rhdpeople_geral';
 
     public $timestamps = false;
 
     protected $keyType = 'string';
+
     public $incrementing = false;
 
     protected $fillable = [
@@ -40,10 +41,10 @@ class Syslog extends Model
 
     protected array $childTypes = [
         'authentication' => AuthenticationLog::class,
-        'contract'       => ContractLog::class,
-        'license'        => LicenseLog::class,
-        'tenant_admin'   => TenantAdminLog::class,
-        'webhook'        => WebhookLog::class,
+        'contract' => ContractLog::class,
+        'license' => LicenseLog::class,
+        'tenant_admin' => TenantAdminLog::class,
+        'webhook' => WebhookLog::class,
     ];
 
     protected static function boot(): void

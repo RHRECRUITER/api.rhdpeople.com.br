@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('leads', function(Blueprint $table){
+        Schema::table('leads', function (Blueprint $table) {
             $table->string('company_name')->nullable();
             $table->string('employee_range');
-            $table->text('challenge') -> nullable();
+            $table->text('challenge')->nullable();
             $table->foreignUuid('company_id')->constrained('companies');
         });
     }

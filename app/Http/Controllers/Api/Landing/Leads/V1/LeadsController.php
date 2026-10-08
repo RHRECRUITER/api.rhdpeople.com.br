@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Api\Landing\Leads\V1;
 
 use App\Exceptions\DuplicateLeadException;

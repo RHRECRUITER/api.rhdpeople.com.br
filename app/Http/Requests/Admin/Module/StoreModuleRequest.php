@@ -1,7 +1,6 @@
 <?php
-namespace App\Http\Requests\Admin\Module;
 
-use App\Http\Requests\Admin\Module\BaseModuleRequest;
+namespace App\Http\Requests\Admin\Module;
 
 class StoreModuleRequest extends BaseModuleRequest
 {
@@ -9,7 +8,7 @@ class StoreModuleRequest extends BaseModuleRequest
     {
         $rules = $this->commonRules();
 
-        $rules['key'][]   = 'required';
+        $rules['key'][] = 'required';
         $rules['label'][] = 'required';
 
         return $rules;

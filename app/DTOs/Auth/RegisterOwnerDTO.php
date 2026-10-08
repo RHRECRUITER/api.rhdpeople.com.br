@@ -1,4 +1,5 @@
 <?php
+
 namespace App\DTOs\Auth;
 
 readonly class RegisterOwnerDTO

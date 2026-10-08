@@ -1,7 +1,6 @@
 <?php
-namespace App\Http\Requests\Admin\Plan;
 
-use App\Http\Requests\Admin\Plan\BasePlanTierRequest;
+namespace App\Http\Requests\Admin\Plan;
 
 class StorePlanTierRequest extends BasePlanTierRequest
 {
@@ -9,7 +8,7 @@ class StorePlanTierRequest extends BasePlanTierRequest
     {
         $rules = $this->commonRules();
 
-        $rules['name'][]       = 'required';
+        $rules['name'][] = 'required';
         $rules['base_price'][] = 'required';
         $rules['max_employees'][] = 'required';
         $rules['modules'][] = 'required';
