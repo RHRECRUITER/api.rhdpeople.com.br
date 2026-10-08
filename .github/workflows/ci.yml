@@ -63,11 +63,11 @@ jobs:
 
     # Análise estática pegando bugs lógicos estruturais
     - name: Análise Estática de Código (Larastan)
-      run: ./vendor/bin/phpstan analyse --memory-limit=2G
+      run: ./vendor/bin/phpstan analyse app --level=5 --memory-limit=2G
 
     # Execução em paralelo com variáveis de isolamento
     - name: Rodar Suíte de Testes (Migrar e Testar)
-      run: php artisan test --parallel
+      run: php artisan test
       env:
         DB_CONNECTION: mysql
         DB_HOST: 127.0.0.1

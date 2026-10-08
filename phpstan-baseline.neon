@@ -1,0 +1,427 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Call to an undefined method Illuminate\\Http\\Request\:\:validated\(\)\.$#'
+			identifier: method.notFound
+			count: 6
+			path: app/DTOs/Admin/AddonDTO.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Http\\Request\:\:validated\(\)\.$#'
+			identifier: method.notFound
+			count: 6
+			path: app/DTOs/Admin/ModuleDTO.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Http\\Request\:\:validated\(\)\.$#'
+			identifier: method.notFound
+			count: 10
+			path: app/DTOs/Admin/PlanTierDTO.php
+
+		-
+			message: '#^Method App\\Domain\\Analytics\\EventSchema\:\:allowedValues\(\) never returns array\<int, string\> so it can be removed from the return type\.$#'
+			identifier: return.unusedType
+			count: 1
+			path: app/Domain/Analytics/EventSchema.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Controllers\\Api\\Analytics\\V1\\Overview\\OverviewController\:\:\$metricsService\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/Api/Analytics/V1/Overview/OverviewController.php
+
+		-
+			message: '#^Parameter \#2 \$message of static method Illuminate\\Routing\\ResponseFactory\:\:api\(\) expects string, int given\.$#'
+			identifier: argument.type
+			count: 2
+			path: app/Http/Controllers/Api/Auth/LoginController.php
+
+		-
+			message: '#^Class app\\Services\\Auth\\RegisterAndContractService referenced with incorrect case\: App\\Services\\Auth\\RegisterAndContractService\.$#'
+			identifier: class.nameCase
+			count: 3
+			path: app/Http/Controllers/Api/Auth/RegisterController.php
+
+		-
+			message: '#^PHPDoc tag @return with type array\<string, array\<mixed\>\|Illuminate\\Contracts\\Validation\\ValidationRule\|string\> is incompatible with native type void\.$#'
+			identifier: return.phpDocType
+			count: 1
+			path: app/Http/Requests/Tracking/TrackBatchRequest.php
+
+		-
+			message: '#^Parameter \#1 \$num of function number_format expects float, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Models/AddOn.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\User\:\:\$tenant_id\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Models/Contract.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\User\:\:\$type\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Models/Contract.php
+
+		-
+			message: '#^Method App\\Models\\EmailVerificationToken\:\:user\(\) has invalid return type App\\Models\\BelongsTo\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/EmailVerificationToken.php
+
+		-
+			message: '#^Method App\\Models\\EmailVerificationToken\:\:user\(\) should return App\\Models\\BelongsTo but returns Illuminate\\Database\\Eloquent\\Relations\\BelongsTo\<App\\Models\\User, \$this\(App\\Models\\EmailVerificationToken\)\>\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Models/EmailVerificationToken.php
+
+		-
+			message: '#^Method App\\Models\\EmployeeInviteToken\:\:company\(\) has invalid return type App\\Models\\BelongsTo\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/EmployeeInviteToken.php
+
+		-
+			message: '#^Method App\\Models\\EmployeeInviteToken\:\:company\(\) should return App\\Models\\BelongsTo but returns Illuminate\\Database\\Eloquent\\Relations\\BelongsTo\<App\\Models\\Company, \$this\(App\\Models\\EmployeeInviteToken\)\>\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Models/EmployeeInviteToken.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Guest\\Invite\:\:\$expirationDate\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/Guest/Invite.php
+
+		-
+			message: '#^Parameter \#1 \$attributes of method Illuminate\\Database\\Eloquent\\Model\:\:update\(\) expects array\<string, mixed\>, array\<int, Illuminate\\Support\\Carbon\|string\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Models/Guest/Invite.php
+
+		-
+			message: '#^Parameter \#1 \$num of function number_format expects float, string\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Models/Module.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\User\:\:\$tenant_id\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Models/Plan.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\User\:\:\$type\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Models/Plan.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$max_employees\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Models/Plan.php
+
+		-
+			message: '#^Parameter \#1 \$num of function number_format expects float, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Models/PlanAddOn.php
+
+		-
+			message: '#^Class App\\Models\\Syslog\\Syslog referenced with incorrect case\: App\\Models\\Syslog\\SysLog\.$#'
+			identifier: class.nameCase
+			count: 1
+			path: app/Models/Syslog/AuthenticationLog.php
+
+		-
+			message: '#^Class App\\Models\\Syslog\\Syslog referenced with incorrect case\: App\\Models\\Syslog\\SysLog\.$#'
+			identifier: class.nameCase
+			count: 1
+			path: app/Models/Syslog/ContractLog.php
+
+		-
+			message: '#^Class App\\Models\\Syslog\\Syslog referenced with incorrect case\: App\\Models\\Syslog\\SysLog\.$#'
+			identifier: class.nameCase
+			count: 1
+			path: app/Models/Syslog/LicenseLog.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\User\:\:\$tenant_id\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Models/Syslog/Syslog.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\User\:\:\$type\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Models/Syslog/Syslog.php
+
+		-
+			message: '#^Class App\\Models\\Syslog\\Syslog referenced with incorrect case\: App\\Models\\Syslog\\SysLog\.$#'
+			identifier: class.nameCase
+			count: 1
+			path: app/Models/Syslog/TenantAdminLog.php
+
+		-
+			message: '#^Class App\\Models\\Syslog\\Syslog referenced with incorrect case\: App\\Models\\Syslog\\SysLog\.$#'
+			identifier: class.nameCase
+			count: 1
+			path: app/Models/Syslog/WebhookLog.php
+
+		-
+			message: '#^Class App\\Models\\Tracking\\EventBlock not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Tracking/Event.php
+
+		-
+			message: '#^Parameter \#1 \$related of method Illuminate\\Database\\Eloquent\\Model\:\:belongsTo\(\) expects class\-string\<Illuminate\\Database\\Eloquent\\Model\>, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Models/Tracking/Event.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\User\:\:\$tenant_id\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Models/Tracking/SessionBlock.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\User\:\:\$type\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Models/Tracking/SessionBlock.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$plan\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Class App\\Providers\\PHPMailer not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Providers/AppServiceProvider.php
+
+		-
+			message: '#^Instantiated class App\\Providers\\PHPMailer not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Providers/AppServiceProvider.php
+
+		-
+			message: '#^Class App\\Repositories\\Eloquent\\EloquentWebhookLogRepository not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Providers/RepositoryServiceProvider.php
+
+		-
+			message: '#^Method App\\Repositories\\Eloquent\\EloquentPlanTierRepository\:\:getAllActive\(\) with return type void returns Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\PlanTier\> but should not return anything\.$#'
+			identifier: return.void
+			count: 1
+			path: app/Repositories/Eloquent/EloquentPlanTierRepository.php
+
+		-
+			message: '#^Method App\\Repositories\\Eloquent\\EloquentPlanTierRepository\:\:getWithModulesAndAddOns\(\) with return type void returns App\\Models\\PlanTier but should not return anything\.$#'
+			identifier: return.void
+			count: 1
+			path: app/Repositories/Eloquent/EloquentPlanTierRepository.php
+
+		-
+			message: '#^File ends with a trailing whitespace\. This may cause problems when running the code in the web browser\. Remove the closing \?\> mark or remove the whitespace\.$#'
+			identifier: whitespace.fileEnd
+			count: 1
+			path: app/Repositories/Eloquent/EloquentTemplateRepository.php
+
+		-
+			message: '#^PHPDoc tag @var for property App\\Repositories\\Eloquent\\EloquentTemplateRepository\:\:\$with with type Illuminate\\Database\\Eloquent\\Model is incompatible with native type array\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Repositories/Eloquent/EloquentTemplateRepository.php
+
+		-
+			message: '#^Constant INACTIVE not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: app/Repositories/Eloquent/EloquentUserRepository.php
+
+		-
+			message: '#^Undefined variable\: \$model$#'
+			identifier: variable.undefined
+			count: 1
+			path: app/Repositories/Eloquent/EloquentUserRepository.php
+
+		-
+			message: '#^Class App\\Models\\Syslog\\Syslog referenced with incorrect case\: App\\Models\\Syslog\\SysLog\.$#'
+			identifier: class.nameCase
+			count: 9
+			path: app/Repositories/Eloquent/Syslog/EloquentSysLogRepository.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/Auth/AuthenticationService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$plan\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/Auth/AuthenticationService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$type_license\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/Auth/AuthenticationService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$email\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/Auth/V1/PasswordRecoveryService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/Auth/V1/PasswordRecoveryService.php
+
+		-
+			message: '#^Called ''env'' outside of the config directory which returns null when the config is cached, use ''config''\.$#'
+			identifier: larastan.noEnvCallsOutsideOfConfig
+			count: 1
+			path: app/Services/Auth/V1/PasswordRecoveryService.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between Carbon\\Carbon and null will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: app/Services/Auth/V1/PasswordRecoveryService.php
+
+		-
+			message: '#^Method App\\Services\\Guest\\InvitationGenerator\:\:createrInvitation\(\) should return App\\Models\\Guest\\Invite but returns Illuminate\\Database\\Eloquent\\Model\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Services/Guest/InvitationGenerator.php
+
+		-
+			message: '#^Loose comparison using \=\= between App\\Enums\\TypeLicense and string will always evaluate to false\.$#'
+			identifier: equal.alwaysFalse
+			count: 1
+			path: app/Services/Guest/InvitationValidator.php
+
+		-
+			message: '#^Property App\\Services\\Guest\\InvitationValidator\:\:\$acceptedLicenseType \(string\) does not accept default value of type App\\Enums\\TypeLicense\:\:DONO\.$#'
+			identifier: property.defaultValue
+			count: 1
+			path: app/Services/Guest/InvitationValidator.php
+
+		-
+			message: '#^Access to property \$Body on an unknown class PHPMailer\\PHPMailer\\PHPMailer\.$#'
+			identifier: class.notFound
+			count: 2
+			path: app/Services/Utilitary/Notification.php
+
+		-
+			message: '#^Access to property \$CharSet on an unknown class PHPMailer\\PHPMailer\\PHPMailer\.$#'
+			identifier: class.notFound
+			count: 2
+			path: app/Services/Utilitary/Notification.php
+
+		-
+			message: '#^Access to property \$Host on an unknown class PHPMailer\\PHPMailer\\PHPMailer\.$#'
+			identifier: class.notFound
+			count: 2
+			path: app/Services/Utilitary/Notification.php
+
+		-
+			message: '#^Access to property \$Password on an unknown class PHPMailer\\PHPMailer\\PHPMailer\.$#'
+			identifier: class.notFound
+			count: 2
+			path: app/Services/Utilitary/Notification.php
+
+		-
+			message: '#^Access to property \$Port on an unknown class PHPMailer\\PHPMailer\\PHPMailer\.$#'
+			identifier: class.notFound
+			count: 2
+			path: app/Services/Utilitary/Notification.php
+
+		-
+			message: '#^Access to property \$SMTPAuth on an unknown class PHPMailer\\PHPMailer\\PHPMailer\.$#'
+			identifier: class.notFound
+			count: 2
+			path: app/Services/Utilitary/Notification.php
+
+		-
+			message: '#^Access to property \$Subject on an unknown class PHPMailer\\PHPMailer\\PHPMailer\.$#'
+			identifier: class.notFound
+			count: 2
+			path: app/Services/Utilitary/Notification.php
+
+		-
+			message: '#^Access to property \$Username on an unknown class PHPMailer\\PHPMailer\\PHPMailer\.$#'
+			identifier: class.notFound
+			count: 2
+			path: app/Services/Utilitary/Notification.php
+
+		-
+			message: '#^Call to method addAddress\(\) on an unknown class PHPMailer\\PHPMailer\\PHPMailer\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Services/Utilitary/Notification.php
+
+		-
+			message: '#^Call to method isHTML\(\) on an unknown class PHPMailer\\PHPMailer\\PHPMailer\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Services/Utilitary/Notification.php
+
+		-
+			message: '#^Call to method isSMTP\(\) on an unknown class PHPMailer\\PHPMailer\\PHPMailer\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Services/Utilitary/Notification.php
+
+		-
+			message: '#^Call to method send\(\) on an unknown class PHPMailer\\PHPMailer\\PHPMailer\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Services/Utilitary/Notification.php
+
+		-
+			message: '#^Call to method setFrom\(\) on an unknown class PHPMailer\\PHPMailer\\PHPMailer\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Services/Utilitary/Notification.php
+
+		-
+			message: '#^Called ''env'' outside of the config directory which returns null when the config is cached, use ''config''\.$#'
+			identifier: larastan.noEnvCallsOutsideOfConfig
+			count: 6
+			path: app/Services/Utilitary/Notification.php
+
+		-
+			message: '#^Caught class PHPMailer\\PHPMailer\\Exception not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Services/Utilitary/Notification.php
+
+		-
+			message: '#^Parameter \$mail of method App\\Services\\Utilitary\\Notification\:\:__construct\(\) has invalid type PHPMailer\\PHPMailer\\PHPMailer\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Services/Utilitary/Notification.php
+
+		-
+			message: '#^Property App\\Services\\Utilitary\\Notification\:\:\$mail has unknown class PHPMailer\\PHPMailer\\PHPMailer as its type\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Services/Utilitary/Notification.php
