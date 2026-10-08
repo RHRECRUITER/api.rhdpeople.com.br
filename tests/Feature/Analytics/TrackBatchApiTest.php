@@ -29,7 +29,7 @@ class TrackBatchApiTest extends TestCase
 
     public function test_it_accepts_a_hybrid_batch_and_reports_partial_validation_results()
     {
-        //bypass para implementação de CI no repositorio
+        // bypass para implementação de CI no repositorio
         $this->markTestIncomplete('Pendente ajuste de autenticação 401.');
         $events = [];
 

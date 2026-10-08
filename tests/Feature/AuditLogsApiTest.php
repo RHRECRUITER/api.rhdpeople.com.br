@@ -11,7 +11,7 @@ class AuditLogsApiTest extends TestCase
 {
     public function test_it_rejects_invalid_audit_log_payload(): void
     {
-        //bypass para subir CI no repositorio
+        // bypass para subir CI no repositorio
         $this->markTestIncomplete('Pendente ajuste de autenticação 401.');
         $response = $this->postJson('/api/v1/logs', [
             'tenant_id' => 'abc',
@@ -30,7 +30,7 @@ class AuditLogsApiTest extends TestCase
 
     public function test_it_accepts_a_valid_audit_log_and_dispatches_the_job(): void
     {
-        //bypass para subir CI no repositorio
+        // bypass para subir CI no repositorio
         $this->markTestIncomplete('Pendente ajuste de autenticação 401.');
         Bus::fake();
 
