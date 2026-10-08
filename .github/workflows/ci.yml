@@ -67,7 +67,7 @@ jobs:
 
     # Execução em paralelo com variáveis de isolamento
     - name: Rodar Suíte de Testes (Migrar e Testar)
-      run: php artisan test
+      run: ./vendor/bin/phpunit
       env:
         DB_CONNECTION: mysql
         DB_HOST: 127.0.0.1
