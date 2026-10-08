@@ -18,14 +18,15 @@ use Illuminate\Support\Facades\Route;
 /**
  * API Routes - Version 1
  * Estrutura modular otimizada por pilhas de middleware (CSRF, Auth e Throttling).
+ *
  * * @author Luan Quevedo
  */
 
 // ─── GRUPO 1: ROTAS PÚBLICAS (Sessão, Cookies e CSRF Ativos) ─────────────────────────
 Route::middleware(['web'])->group(function () {
 
-// Sub-módulo: admin
-//Apos existir painel ADMIN é sera necessario separar em 2 grupos um com necessidade de autenticação por credenciais e outro publico.
+    // Sub-módulo: admin
+    // Apos existir painel ADMIN é sera necessario separar em 2 grupos um com necessidade de autenticação por credenciais e outro publico.
     Route::prefix('admin')->group(function () {
         // ─── PLAN TIERS (Prateleira de Planos) ────────────────────────
         Route::prefix('plan-tiers')->group(function () {
@@ -74,13 +75,13 @@ Route::middleware(['web'])->group(function () {
         Route::post('/captcha/verify', [CaptchaController::class, 'validateCaptcha'])->name('security.captcha.verify');
     });
 
-/**
- * Módulo: Landing Page
- * Endpoints públicos voltados para conversão e monitoramento de saúde da aplicação.
- */
+    /**
+     * Módulo: Landing Page
+     * Endpoints públicos voltados para conversão e monitoramento de saúde da aplicação.
+     */
     Route::prefix('landing')->group(function () {
         // Healthcheck simples para verificar se a API está respondendo.
-        Route::get('/health', fn() => Response::api(['status' => 'ok']));
+        Route::get('/health', fn () => Response::api(['status' => 'ok']));
 
         // Registro de Leads: Protegido por Captcha atômico com contexto de landing page.
         Route::post('/leads', [LeadsController::class, 'store'])

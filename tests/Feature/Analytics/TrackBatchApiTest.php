@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Feature\Analytics;
 
 use App\Domain\Analytics\EventType;
@@ -10,19 +11,19 @@ class TrackBatchApiTest extends TestCase
     private function validEvent(array $overrides = []): array
     {
         return array_merge([
-            'event_id'    => (string) Str::uuid(),
-            'type'        => EventType::PageView->value,
+            'event_id' => (string) Str::uuid(),
+            'type' => EventType::PageView->value,
             'occurred_at' => now()->toIso8601String(),
-            'page'        => '/landing',
+            'page' => '/landing',
         ], $overrides);
     }
 
     private function validPayload(array $events): array
     {
         return [
-            'client_id'  => (string) Str::uuid(),
+            'client_id' => (string) Str::uuid(),
             'session_id' => (string) Str::uuid(),
-            'events'     => $events,
+            'events' => $events,
         ];
     }
 
@@ -33,8 +34,8 @@ class TrackBatchApiTest extends TestCase
         for ($index = 0; $index < 8; $index++) {
             $events[] = $this->validEvent([
                 'event_id' => (string) Str::uuid(),
-                'type'     => EventType::PageView->value,
-                'props'    => ['section' => 'home'],
+                'type' => EventType::PageView->value,
+                'props' => ['section' => 'home'],
             ]);
         }
 
@@ -44,7 +45,7 @@ class TrackBatchApiTest extends TestCase
 
         $events[] = $this->validEvent([
             'props' => [
-                'section'     => 'home',
+                'section' => 'home',
                 'not_allowed' => 'trash',
             ],
         ]);
@@ -68,5 +69,4 @@ class TrackBatchApiTest extends TestCase
                 'meta' => ['timestamp'],
             ]);
     }
-
 }

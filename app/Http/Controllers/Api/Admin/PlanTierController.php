@@ -14,8 +14,7 @@ class PlanTierController extends Controller
 {
     public function __construct(
         private readonly PlanTierManagementService $planTierService
-    ) {
-    }
+    ) {}
 
     /**
      * Listagem de todos os planos cadastrados (Catálogo)

@@ -1,17 +1,19 @@
 <?php
+
 namespace App\Http\Controllers\Api\Guest\V1;
 
-
-use App\Services\Guest\InviteService;
-
-use Illuminate\Http\Request;
 use App\Http\Requests\Guest\InviteRequest;
+use App\Services\Guest\InviteService;
+use Illuminate\Http\Request;
 
-class InviteController{
-    function __construct(
+class InviteController
+{
+    public function __construct(
         protected InviteService $service,
-        ){}
-    public function createrPreRegistration(InviteRequest $request){
+    ) {}
+
+    public function createrPreRegistration(InviteRequest $request)
+    {
         $dateInput = $request->validated();
         $result = $this->service->createrPreRegistration(
             $dateInput['email'],
@@ -19,6 +21,7 @@ class InviteController{
             $dateInput['type_license'],
             $dateInput['expiration_date']
         );
+
         return response()->api(
             $result['name'],
             $result['email'],
@@ -26,31 +29,36 @@ class InviteController{
         );
 
     }
-    public function createrInviteRegister(Request $request){
-        $dateInput = $request->validate([
-            'name' => ['required','string','max:100'],
-            'password' =>['required', 'confirmed', 'min:8'],
-            'token' => ['required','string'],
-            ]);
-            $result = $this->service->createrInviteRegister(
-                $dateInput['name'],
-                $dateInput['password'],
-                $dateInput['token']
 
-            );
-            return response()->api(
-                $result['data'],
-                $result['message'],
-                $result['status']
-            );
+    public function createrInviteRegister(Request $request)
+    {
+        $dateInput = $request->validate([
+            'name' => ['required', 'string', 'max:100'],
+            'password' => ['required', 'confirmed', 'min:8'],
+            'token' => ['required', 'string'],
+        ]);
+        $result = $this->service->createrInviteRegister(
+            $dateInput['name'],
+            $dateInput['password'],
+            $dateInput['token']
+
+        );
+
+        return response()->api(
+            $result['data'],
+            $result['message'],
+            $result['status']
+        );
 
     }
 
-    public function validateToken(InviteRequest $request){
+    public function validateToken(InviteRequest $request)
+    {
         $token = $request->validate([
-            'token' => ['required','string'],
-            ]);
+            'token' => ['required', 'string'],
+        ]);
         $result = $this->service->validateToken($token['token']);
+
         return response()->api(
             $result['data'],
             $result['message'],
@@ -59,4 +67,3 @@ class InviteController{
 
     }
 }
-?>

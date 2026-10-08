@@ -1,7 +1,6 @@
 <?php
-namespace App\Http\Requests\Admin\Plan;
 
-use App\Http\Requests\Admin\Plan\BasePlanTierRequest;
+namespace App\Http\Requests\Admin\Plan;
 
 class UpdatePlanTierRequest extends BasePlanTierRequest
 {
@@ -11,6 +10,7 @@ class UpdatePlanTierRequest extends BasePlanTierRequest
 
         return array_map(function ($rule) {
             array_unshift($rule, 'sometimes');
+
             return $rule;
         }, $rules);
     }

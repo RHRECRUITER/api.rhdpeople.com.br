@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Auth;
 
 use App\Models\User;
@@ -18,14 +19,14 @@ class AuthenticationService
 
     public function buildLoginResponse(User $user): array
     {
-        //Load dos relacionamentos de licenças para evitar queries desnecessarias
+        // Load dos relacionamentos de licenças para evitar queries desnecessarias
         $user->load('licenses.plan.tenant');
-        //Extração de helpers disponibilizados no model users
-        $isSuperAdmin     = $user->isSuperAdmin();
-        $isCompanyAdmin   = $user->isCompanyAdmin();
+        // Extração de helpers disponibilizados no model users
+        $isSuperAdmin = $user->isSuperAdmin();
+        $isCompanyAdmin = $user->isCompanyAdmin();
         $hasActiveLicense = $user->licenses()->where('is_active', true)->exists();
 
-        //Deinição de role
+        // Deinição de role
         $primaryRole = 'user';
         if ($isSuperAdmin) {
             $primaryRole = 'super_admin';
@@ -34,31 +35,31 @@ class AuthenticationService
         } elseif ($hasActiveLicense) {
             $primaryRole = 'company_user';
         }
-        //Regra de renovação de licensa
+        // Regra de renovação de licensa
         $needRenewal = (! $isSuperAdmin && ! $hasActiveLicense);
         // Licensa com status atual
         $currentLicense = $user->licenses()->with('plan.tenant')->where('is_active', true)->first();
-        $companyName    = null;
+        $companyName = null;
         if ($currentLicense && $currentLicense->plan && $currentLicense->plan->tenant) {
             $companyName = $currentLicense->plan->tenant->name;
         }
+
         return [
-            'user'    => [
-                'id'    => $user->id,
-                'name'  => $user->name,
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
                 'email' => $user->email,
             ],
-            'access'  => [
-                'role'               => $primaryRole,
+            'access' => [
+                'role' => $primaryRole,
                 'has_active_license' => $hasActiveLicense,
-                'need_renewal'       => $needRenewal,
+                'need_renewal' => $needRenewal,
             ],
             'context' => $currentLicense ? [
-                'license_id'   => $currentLicense->id,
+                'license_id' => $currentLicense->id,
                 'type_license' => $currentLicense->type_license,
-                'company'      => $companyName,
+                'company' => $companyName,
             ] : null,
         ];
     }
-
 }

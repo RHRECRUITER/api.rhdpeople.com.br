@@ -15,8 +15,7 @@ class StoreAuditLogJob implements ShouldQueue
 
     public function __construct(
         public array $payload
-    ) {
-    }
+    ) {}
 
     public function handle(): void
     {

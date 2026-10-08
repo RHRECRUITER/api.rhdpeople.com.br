@@ -34,8 +34,9 @@ class TrackBatchRequest extends FormRequest
         $validator->after(function (Validator $validator) {
             // Verifica se o session_id enviado no payload condiz com a sessão real do request
             // Isso impede que um cliente envie eventos "fake" para sessões de terceiros.
-            if ($this->input('session_id') !== session()->getId() && !config('app.debug')) {
+            if ($this->input('session_id') !== session()->getId() && ! config('app.debug')) {
                 $validator->errors()->add('session_id', 'Security session mismatch.');
+
                 return;
             }
 

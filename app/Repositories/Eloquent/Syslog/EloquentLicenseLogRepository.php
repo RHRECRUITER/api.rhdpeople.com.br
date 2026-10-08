@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Eloquent\Syslog;
 
+use App\Models\License;
 use App\Models\Syslog\LicenseLog;
 use App\Repositories\Contracts\Syslog\LicenseLogRepositoryInterface;
 
@@ -20,7 +21,7 @@ class EloquentLicenseLogRepository implements LicenseLogRepositoryInterface
     public function getByLicense(string $licenseId)
     {
         return LicenseLog::query()
-            ->where('auditable_type', \App\Models\License::class)
+            ->where('auditable_type', License::class)
             ->where('auditable_id', $licenseId)
             ->latest('created_at')
             ->get();
