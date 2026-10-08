@@ -1,7 +1,6 @@
 <?php
-namespace App\Http\Requests\Admin\Module;
 
-use App\Http\Requests\Admin\Module\BaseModuleRequest;
+namespace App\Http\Requests\Admin\Module;
 
 class UpdateModuleRequest extends BaseModuleRequest
 {
@@ -11,6 +10,7 @@ class UpdateModuleRequest extends BaseModuleRequest
 
         return array_map(function ($rule) {
             array_unshift($rule, 'sometimes');
+
             return $rule;
         }, $rules);
     }

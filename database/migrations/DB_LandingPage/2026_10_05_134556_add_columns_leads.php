@@ -9,13 +9,12 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-
     public function up(): void
     {
-        Schema::table('leads', function(Blueprint $table){
+        Schema::table('leads', function (Blueprint $table) {
             $table->string('company_name')->nullable();
             $table->string('employee_range');
-            $table->text('challenge') -> nullable();
+            $table->text('challenge')->nullable();
             $table->unsignedBigInteger('company_id')->nullable();
         });
     }

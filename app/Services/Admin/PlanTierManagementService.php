@@ -19,19 +19,19 @@ class PlanTierManagementService
         try {
             // 1. Criar o registro Pai com as propriedades corretas do DTO
             $planTier = PlanTier::create([
-                'name'                => $dto->name,
-                'base_price'          => $dto->basePrice,
-                'max_employees'       => $dto->maxEmployees,
+                'name' => $dto->name,
+                'base_price' => $dto->basePrice,
+                'max_employees' => $dto->maxEmployees,
                 'annual_discount_pct' => $dto->annualDiscountPct,
-                'is_active'           => $dto->isActive,
+                'is_active' => $dto->isActive,
             ]);
 
             // 2. Módulos
             if (! empty($dto->modules)) {
                 foreach ($dto->modules as $moduleData) {
                     $planTier->tierModules()->create([
-                        'module_id'    => $moduleData['module_id'],
-                        'is_included'  => $moduleData['is_included'] ?? false,
+                        'module_id' => $moduleData['module_id'],
+                        'is_included' => $moduleData['is_included'] ?? false,
                         'is_available' => $moduleData['is_available'] ?? true,
                     ]);
                 }
@@ -41,7 +41,7 @@ class PlanTierManagementService
             if (! empty($dto->addOns)) {
                 foreach ($dto->addOns as $addOnData) {
                     $planTier->tierAddOns()->create([
-                        'add_on_id'    => $addOnData['add_on_id'],
+                        'add_on_id' => $addOnData['add_on_id'],
                         'is_available' => $addOnData['is_available'] ?? true,
                     ]);
                 }
@@ -69,11 +69,11 @@ class PlanTierManagementService
         try {
             // 1. Atualizar dados base
             $planTier->update(array_filter([
-                'name'                => $dto->name,
-                'base_price'          => $dto->basePrice,
-                'max_employees'       => $dto->maxEmployees,
+                'name' => $dto->name,
+                'base_price' => $dto->basePrice,
+                'max_employees' => $dto->maxEmployees,
                 'annual_discount_pct' => $dto->annualDiscountPct,
-                'is_active'           => $dto->isActive,
+                'is_active' => $dto->isActive,
             ], fn ($v) => ! is_null($v)));
 
             // 2. Atualizar Módulos (Deleta antigos e insere novos)
@@ -82,8 +82,8 @@ class PlanTierManagementService
 
                 foreach ($dto->modules as $moduleData) {
                     $planTier->tierModules()->create([
-                        'module_id'    => $moduleData['module_id'],
-                        'is_included'  => $moduleData['is_included'] ?? false,
+                        'module_id' => $moduleData['module_id'],
+                        'is_included' => $moduleData['is_included'] ?? false,
                         'is_available' => $moduleData['is_available'] ?? true,
                     ]);
                 }
@@ -95,7 +95,7 @@ class PlanTierManagementService
 
                 foreach ($dto->addOns as $addOnData) {
                     $planTier->tierAddOns()->create([
-                        'add_on_id'    => $addOnData['add_on_id'],
+                        'add_on_id' => $addOnData['add_on_id'],
                         'is_available' => $addOnData['is_available'] ?? true,
                     ]);
                 }

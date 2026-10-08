@@ -33,7 +33,7 @@ class PasswordRecoveryServiceTest extends TestCase
         $tokens = Mockery::mock(PasswordRecoveryRepositoryInterface::class);
         $tokens->shouldReceive('createToken')
             ->once()
-            ->andReturn(tap(new PasswordRecoveryToken(), function (PasswordRecoveryToken $token): void {
+            ->andReturn(tap(new PasswordRecoveryToken, function (PasswordRecoveryToken $token): void {
                 $token->token = '11111111-1111-1111-1111-111111111111';
             }));
 
@@ -55,6 +55,7 @@ class PasswordRecoveryServiceTest extends TestCase
         $user = new class
         {
             public string $email = 'user@example.com';
+
             public string $name = 'User Example';
 
             public function update(array $data): void
@@ -65,7 +66,7 @@ class PasswordRecoveryServiceTest extends TestCase
             }
         };
 
-        $token = tap(new PasswordRecoveryToken(), function (PasswordRecoveryToken $token) use ($user): void {
+        $token = tap(new PasswordRecoveryToken, function (PasswordRecoveryToken $token) use ($user): void {
             $token->used_at = null;
             $token->expires_at = now()->addMinutes(5);
             $token->setRelation('user', $user);

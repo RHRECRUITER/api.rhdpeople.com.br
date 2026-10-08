@@ -2,6 +2,8 @@
 
 namespace App\Repositories\Contracts\Syslog;
 
+use Carbon\Carbon;
+
 interface AuthenticationLogRepositoryInterface
 {
     public function create(array $data);
@@ -11,7 +13,7 @@ interface AuthenticationLogRepositoryInterface
     /**
      * Conta tentativas falhas de um usuário desde um instante — base para lockout.
      */
-    public function countFailedAttemptsSince(string $userId, \Carbon\Carbon $since): int;
+    public function countFailedAttemptsSince(string $userId, Carbon $since): int;
 
     /**
      * Retorna o último login bem-sucedido de um usuário.

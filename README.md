@@ -16,6 +16,7 @@ Para entender a fundo as decisões arquiteturais, fluxos de dados, regras de neg
 4. 📊 **[Tracking e Analytics (Ingestão de Eventos em Lote)](/Docs/Tracking/Tracking.README.md)**
 5. 🧲 **[Captação de Leads (Landing Page)](/Docs/Landing/Lead.README.md)**
 6. 💳 **[Planos e Assinaturas (Tiers, Licenças e Contratos)](/Docs/Data/planos_readme.md)**
+7. 🚀 **[Workflow, CI/CD e Qualidade de Código (Git Flow, Commits, PHPStan)](/Docs/Workflow/Workflow.README.md)**
 
 ---
 
@@ -102,6 +103,8 @@ O desenvolvimento do **RHdPeople API** segue em ritmo acelerado. As próximas en
 * Endpoints públicos `POST /api/v1/auth/password/forgot` e `POST /api/v1/auth/password/reset` implementados com `PasswordRecoveryToken`, requests dedicados, service e jobs assíncronos.
 * O fluxo mantém o contrato de segurança do projeto: não expõe se o e-mail existe e valida expiração/uso único do token.
 
+- [x] **Pipeline CI/CD e Qualidade de Código:**
+  - Esteira automatizada no GitHub Actions configurada com serviços (MySQL/Redis), cache, auditoria (Composer Audit), formatação (Laravel Pint), análise estática (Larastan Nível 5 com baseline) e suíte de testes.
 
 * [ ] **Integração de Leads (Database):**
 * Substituição do atual `InMemoryLeadsStore` pela persistência real via Eloquent no banco de dados da `landingpage`, ajustando divergências de esquema.

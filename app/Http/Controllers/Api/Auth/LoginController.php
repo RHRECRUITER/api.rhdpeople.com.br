@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Api\Auth;
 
 use App\Http\Controllers\Controller;
@@ -22,10 +23,11 @@ class LoginController extends Controller
         $request->session()->regenerate();
 
         $payload = $this->authService->buildLoginResponse(Auth::user());
+
         return Response::api([
             'success' => true,
             'message' => 'Login realizado com sucesso',
-            'data'    => $payload,
+            'data' => $payload,
         ], 200);
     }
 
@@ -36,7 +38,7 @@ class LoginController extends Controller
         $request->session()->regenerateToken();
 
         return Response::api([
-            'sucess'  => true,
+            'sucess' => true,
             'message' => 'Logout realizado com sucesso',
         ], 200);
     }

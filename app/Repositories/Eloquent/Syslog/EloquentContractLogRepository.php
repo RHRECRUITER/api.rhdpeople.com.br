@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Eloquent\Syslog;
 
+use App\Models\Contract;
 use App\Models\Syslog\ContractLog;
 use App\Repositories\Contracts\Syslog\ContractLogRepositoryInterface;
 
@@ -20,7 +21,7 @@ class EloquentContractLogRepository implements ContractLogRepositoryInterface
     public function getByContract(string $contractId)
     {
         return ContractLog::query()
-            ->where('auditable_type', \App\Models\Contract::class)
+            ->where('auditable_type', Contract::class)
             ->where('auditable_id', $contractId)
             ->latest('created_at')
             ->get();
@@ -29,7 +30,7 @@ class EloquentContractLogRepository implements ContractLogRepositoryInterface
     public function lastEventForContract(string $contractId)
     {
         return ContractLog::query()
-            ->where('auditable_type', \App\Models\Contract::class)
+            ->where('auditable_type', Contract::class)
             ->where('auditable_id', $contractId)
             ->latest('created_at')
             ->first();

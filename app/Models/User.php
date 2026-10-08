@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use App\Enums\TypeLicense;
@@ -18,6 +19,7 @@ class User extends Authenticatable
         'email',
         'password',
     ];
+
     protected $hidden = [
         'password',
         'remember_token',
@@ -25,13 +27,14 @@ class User extends Authenticatable
 
     protected $casts = [
         'email_verified_at' => 'datetime',
-        'password'          => 'hashed',
+        'password' => 'hashed',
     ];
 
     public function licenses(): HasMany
     {
         return $this->hasMany(License::class, 'user_id');
     }
+
     /**
      * Retorna a empresa atual que o usuário está acessando
      * com base na sua licença ativa.
@@ -39,6 +42,7 @@ class User extends Authenticatable
     public function currentCompany()
     {
         $activeLicense = $this->licenses()->with('plan.tenant')->where('is_active', true)->first();
+
         return $activeLicense ? $activeLicense->plan->tenant : null;
     }
 

@@ -135,7 +135,6 @@ class RepositoryServiceProvider extends ServiceProvider
             EloquentAddOnRepository::class
         );
 
-
         /**
          * SYSLOG AUDITION
          */
