@@ -129,7 +129,10 @@ class LeadsApiTest extends TestCase
             $mock->shouldReceive('updateOrCreateLead')
                 ->once()
                 ->with(\Mockery::any(), \Mockery::on(function ($lead) {
-                    return $lead['name'] === 'Joao Silva';
+                    return $lead['name'] === 'Joao Silva'
+                        && $lead['company_name'] === 'ACME LTDA'
+                        && $lead['employee_range'] === '11-50'
+                        && isset($lead['challenge']['payroll']);
                 }))
                 ->andReturn((object) ['id' => 123, 'name' => 'Joao Silva']);
         });
