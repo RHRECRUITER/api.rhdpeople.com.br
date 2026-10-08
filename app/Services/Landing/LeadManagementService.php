@@ -50,9 +50,9 @@ class LeadManagementService
             'phone' => $payload['phone'] ?? null,
             'status' => 'converted',
             'last_field_filled' => 'completed',
-            'company_name'      => $payload['company_name'] ?? null,
-            'employee_range'    => $payload['employee_range'] ?? (isset($payload['number_employees']) ? (string) $payload['number_employees'] : null),
-            'challenge'         => $payload['objective'] ?? $payload['challenge'] ?? null,
+            'company_name' => $payload['company_name'] ?? null,
+            'employee_range' => $payload['employee_range'] ?? (isset($payload['number_employees']) ? (string) $payload['number_employees'] : null),
+            'challenge' => $payload['objective'] ?? $payload['challenge'] ?? null,
         ];
 
         return $this->leadRepository->updateOrCreateLead($sessionId, $data);
