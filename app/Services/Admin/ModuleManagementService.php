@@ -14,11 +14,11 @@ class ModuleManagementService
     {
         // Cria o registro diretamente no banco e já joga na variável
         $module = Module::create([
-            'key'         => $dto->key,
-            'label'       => $dto->label,
+            'key' => $dto->key,
+            'label' => $dto->label,
             'description' => $dto->description,
             'extra_price' => $dto->extraPrice,
-            'is_active'   => $dto->isActive,
+            'is_active' => $dto->isActive,
         ]);
 
         // Retorna o objeto criado para o Controller
@@ -35,12 +35,12 @@ class ModuleManagementService
 
         // 2. Atualiza só o que foi enviado no Request
         $module->update(array_filter([
-            'key'         => $dto->key,
-            'label'       => $dto->label,
+            'key' => $dto->key,
+            'label' => $dto->label,
             'description' => $dto->description,
             'extra_price' => $dto->extraPrice,
-            'is_active'   => $dto->isActive,
-        ], fn($v) => ! is_null($v)));
+            'is_active' => $dto->isActive,
+        ], fn ($v) => ! is_null($v)));
 
         // 3. Retorna o Model atualizado
         return $module;

@@ -17,39 +17,38 @@ class LeadManagementService
     /**
      * Processa o registro de lead da Landing Page com deduplicação, telemetria e persistência.
      *
-     * @param array<string, mixed> $payload
-     * @param string|null $ip
-     * @return mixed
+     * @param  array<string, mixed>  $payload
+     *
      * @throws DuplicateLeadException
      */
     public function registerLead(array $payload, ?string $ip = null): mixed
     {
         $email = (string) ($payload['corporate_email'] ?? $payload['email'] ?? '');
-        $key   = 'leads:dedupe:email' . sha1($email);
+        $key = 'leads:dedupe:email'.sha1($email);
 
         if (Cache::has($key)) {
-            throw new DuplicateLeadException();
+            throw new DuplicateLeadException;
         }
 
         Cache::put($key, true, now()->addHour());
 
         Log::info('leads.demo_requested', [
-            'name'            => $payload['name'] ?? null,
-            'company_name'    => $payload['company_name'] ?? null,
+            'name' => $payload['name'] ?? null,
+            'company_name' => $payload['company_name'] ?? null,
             'corporate_email' => $email,
-            'phone'           => $payload['phone'] ?? null,
-            'modules'         => $payload['objective'] ?? null,
-            'employee_range'  => $payload['employee_range'] ?? null,
-            'ip'              => $ip,
+            'phone' => $payload['phone'] ?? null,
+            'modules' => $payload['objective'] ?? null,
+            'employee_range' => $payload['employee_range'] ?? null,
+            'ip' => $ip,
         ]);
 
         $sessionId = (string) ($payload['session_id'] ?? session()->getId() ?: Str::uuid()->toString());
 
         $data = [
-            'name'              => $payload['name'] ?? null,
-            'email'             => $email,
-            'phone'             => $payload['phone'] ?? null,
-            'status'            => 'converted',
+            'name' => $payload['name'] ?? null,
+            'email' => $email,
+            'phone' => $payload['phone'] ?? null,
+            'status' => 'converted',
             'last_field_filled' => 'completed',
             // TODO (Aguardando migration da equipe de dados):
             // 'company_name'   => $payload['company_name'] ?? null,

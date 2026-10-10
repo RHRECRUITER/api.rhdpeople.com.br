@@ -1,7 +1,6 @@
 <?php
-namespace App\Http\Requests\Admin\Addon;
 
-use App\Http\Requests\Admin\Addon\BaseAddonRequest;
+namespace App\Http\Requests\Admin\Addon;
 
 class UpdateAddonRequest extends BaseAddonRequest
 {
@@ -11,6 +10,7 @@ class UpdateAddonRequest extends BaseAddonRequest
 
         return array_map(function ($rule) {
             array_unshift($rule, 'sometimes');
+
             return $rule;
         }, $rules);
     }

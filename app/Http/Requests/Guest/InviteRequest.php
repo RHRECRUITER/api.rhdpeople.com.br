@@ -2,11 +2,10 @@
 
 namespace App\Http\Requests\Guest;
 
+use App\Enums\TypeLicense;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
-
-use App\Enums\TypeLicense;
 
 class InviteRequest extends FormRequest
 {
@@ -26,15 +25,15 @@ class InviteRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' =>  ['required','string'],
-            'email' =>  ['required','string','email','unique:users', 'max:200'],
+            'name' => ['required', 'string'],
+            'email' => ['required', 'string', 'email', 'unique:users', 'max:200'],
             'type_license' => ['required', Rule::enum(TypeLicense::class)->only([
                 TypeLicense::OPERACIONAL,
                 TypeLicense::COLABORADOR,
-                ])],
+            ])],
             'expiration_date' => ['required, date'],
-            'license_id' => ['required','uuid','exists:license,id'],
-            'id_plan' => ['required','uuid','exists:plan,id']
+            'license_id' => ['required', 'uuid', 'exists:license,id'],
+            'id_plan' => ['required', 'uuid', 'exists:plan,id'],
         ];
     }
 
@@ -44,6 +43,7 @@ class InviteRequest extends FormRequest
             'email.unique' => 'email já registrado no banco de dados.',
         ];
     }
+
     public function attributes(): array
     {
         return [
@@ -52,5 +52,4 @@ class InviteRequest extends FormRequest
             'email' => 'Endereço de e-mail',
         ];
     }
-
 }

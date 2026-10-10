@@ -43,10 +43,11 @@ class EloquentDailyMetricRepository implements DailyMetricRepositoryInterface
             ->get();
     }
 
-    public function getAverageAllColuns(string $startDate, string $endDate){
+    public function getAverageAllColuns(string $startDate, string $endDate)
+    {
         return $this->model::selectRaw('COUNT(*) AS data_count, SUM(total_views) AS sum_views, SUM(total_conversions) AS sum_conversions, SUM(bounce_rate) AS sum_bounces')
-        ->whereBetween('date', [$startDate, $endDate])
-        ->orderBy('date', 'asc')
-        ->get();
+            ->whereBetween('date', [$startDate, $endDate])
+            ->orderBy('date', 'asc')
+            ->get();
     }
 }

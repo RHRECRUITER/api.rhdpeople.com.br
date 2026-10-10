@@ -1,4 +1,5 @@
 <?php
+
 namespace App\DTOs\Admin;
 
 use Illuminate\Http\Request;
@@ -11,8 +12,7 @@ class AddonDTO
         public readonly ?string $description,
         public readonly ?float $price,
         public readonly ?bool $isActive,
-    ) {
-    }
+    ) {}
 
     public static function fromRequest(Request $request): self
     {
@@ -25,4 +25,3 @@ class AddonDTO
         );
     }
 }
-

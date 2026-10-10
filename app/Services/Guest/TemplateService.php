@@ -83,6 +83,6 @@ class TemplateService
 
             </body>
             </html>
-        ";;
+        ";
     }
 }
