@@ -2,7 +2,7 @@
 
 Este documento detalha o módulo de captação de Leads da aplicação RHDPeople. Este módulo é responsável por receber, sanitizar, validar e armazenar as solicitações de demonstração vindas da landing page pública.
 
-Atualmente, o armazenamento definitivo em banco de dados está pendente devido a divergências de dados em homologação, operando temporariamente com um repositório em memória.
+O armazenamento é realizado de forma definitiva em banco de dados, consolidando os dados cadastrais e de perfil da empresa (`company_name`, `employee_range` e `challenge`) e vinculando-os à sessão de telemetria quando existente.
 
 ---
 
@@ -12,10 +12,10 @@ A arquitetura foi pensada para blindar o endpoint público contra spans e submis
 
 **Principais Decisões Arquiteturais:**
 
-* **Abstração de Repositório (Repository Pattern):** A persistência depende da interface `LeadsStore`. Atualmente, o sistema utiliza a implementação `InMemoryLeadsStore`, facilitando a futura troca para um banco de dados real sem alterar o controlador.
-* **Deduplicação de Leads:** O `LeadsController` impede submissões repetidas através do cache. Um hash SHA-1 do e-mail corporativo é salvo, bloqueando novas tentativas com o mesmo e-mail por 1 hora e retornando o status HTTP 409.
+* **Abstração de Repositório (Repository Pattern):** A camada de serviço depende do contrato `LeadRepositoryInterface` (através do método `updateOrCreateLead`), desacoplando a lógica de negócio do ORM (Eloquent) e permitindo atualizar um lead iniciado na telemetria ou criar um novo registro convertido com segurança.
+* **Camada de Serviço e Deduplicação de Leads:** A orquestração da regra de negócio é centralizada no `LeadManagementService`. Antes de persistir, o serviço verifica a duplicidade no cache através de um hash `SHA-1` do e-mail corporativo (com expiração de 1 hora). Caso já exista, é lançada a exceção de domínio `DuplicateLeadException`, retornando o status HTTP `409 Conflict`.
 * **Herança de Requests:** A classe `LeadsRequest` estende `PublicFormRequest`, que por sua vez estende `BaseFormRequest`, garantindo que a autorização padrão para endpoints públicos retorne sempre `true` de forma limpa.
-* **Logging de Desenvolvimento:** As tentativas de submissão bem-sucedidas são registradas via `Log::info` para fins de monitoramento e debug em ambiente de desenvolvimento.
+* **Logging Seguro e Privacidade (LGPD):** As submissões bem-sucedidas são registradas via `Log::info` (`leads.demo_requested`) com proteção de dados sensíveis: o e-mail completo e o telefone não são expostos em texto puro nos logs, registrando-se apenas o domínio (`email_domain`), um indicador booleano de telefone (`has_phone`) e o endereço IP anonimizado via hash criptográfico (`HMAC-SHA256`).
 
 ---
 
@@ -26,7 +26,7 @@ A classe `LeadsRequest` funciona como um firewall de dados, atuando em três fre
 * **Sanitização Prévia (`prepareForValidation`):** Antes de validar, o sistema limpa os dados. Remove espaços duplicados em nomes, força o e-mail para letras minúsculas, extrai apenas os números do telefone e normaliza o array de objetivos (módulos), garantindo que todos existam no payload com o valor booleano adequado.
 * **Barreiras Anti-Bot:**
 * **Honeypot:** O campo `website` é exigido no payload (`present`), mas deve obrigatoriamente estar vazio (`max:0`). Bots preenchem todos os campos que encontram, caindo nesta armadilha.
-* **Validação de Tempo Humano:** O sistema compara o `form_started_at` com o tempo atual do servidor. Rejeita preenchimentos rápidos demais (menos de 2 segundos) ou formulários expirados (mais de 2 horas abertos).
+* **Validação de Tempo Humano:** O sistema compara o `form_started_at` com o tempo atual do servidor. Rejeita preenchimentos rápidos demais (menos de 2 segundos) ou formulários expirados (mais de `7200` segundos / 2 horas abertos).
 
 
 * **Regras de Negócio Estritas (`withValidator`):** Garante que nenhum módulo não-autorizado seja enviado e força a seleção de pelo menos um módulo válido (ex: `time_tracking`, `payroll`) para prosseguir.
