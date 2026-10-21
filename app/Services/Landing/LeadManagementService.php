@@ -32,14 +32,17 @@ class LeadManagementService
 
         Cache::put($key, true, now()->addHour());
 
+        $emailDomain = $email ? explode('@', $email)[1] ?? null : null;
+        $phoneBoolean = ! empty($payload['phone']);
+        $ipHash = $ip ? hash_hmac('sha256', $ip, (string) config('app.key')) : null;
+
         Log::info('leads.demo_requested', [
             'name' => $payload['name'] ?? null,
             'company_name' => $payload['company_name'] ?? null,
-            'corporate_email' => $email,
-            'phone' => $payload['phone'] ?? null,
+            'email_domain' => $emailDomain,
+            'has_phone' => $phoneBoolean,
             'modules' => $payload['objective'] ?? null,
-            'employee_range' => $payload['employee_range'] ?? null,
-            'ip' => $ip,
+            'ip' => $ipHash,
         ]);
 
         $sessionId = (string) ($payload['session_id'] ?? session()->getId() ?: Str::uuid()->toString());
