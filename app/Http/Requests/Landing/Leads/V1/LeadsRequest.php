@@ -77,7 +77,7 @@ class LeadsRequest extends PublicFormRequest
                 $validator->errors()->add('form_started_at', 'Invalid start time.');
             } elseif ($elapsed < 2) {
                 $validator->errors()->add('form_started_at', 'Submitted too fast.');
-            } elseif ($elapsed > 60 * 60 * 2) { // 2h
+            } elseif ($elapsed > 7200) { // 2h
                 $validator->errors()->add('form_started_at', 'Form expired.');
             }
         });
