@@ -22,7 +22,6 @@ class AddonManagementService
 
     public function updateAddon(string $id, AddonDTO $dto): AddOn
     {
-
         $addon = AddOn::findOrFail($id);
 
         $addon->update(array_filter([

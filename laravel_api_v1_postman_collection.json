@@ -1,0 +1,1141 @@
+{
+  "info": {
+    "name": "Laravel API - V1",
+    "description": "Collection gerada a partir das rotas Laravel fornecidas. Os payloads de escrita são exemplos ilustrativos e devem ser ajustados às validações dos controllers. Para rotas web/Sanctum, configure cookies e CSRF conforme o ambiente.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "01 - Authentication",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/auth/register",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "auth",
+                "register"
+              ]
+            },
+            "description": "Payload ilustrativo; confirme os campos e regras no RegisterController.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Nome completo\",\n  \"email\": \"usuario@example.com\",\n  \"password\": \"{{password}}\",\n  \"password_confirmation\": \"{{password}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Use o cookie jar do Postman para manter cookies de sessão quando a aplicação estiver configurada para autenticação SPA/Sanctum.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"usuario@example.com\",\n  \"password\": \"{{password}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Logout (autenticado)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/auth/logout",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "auth",
+                "logout"
+              ]
+            },
+            "description": "Requer sessão autenticada. Em fluxo SPA Sanctum, envie também o cookie de sessão e o token CSRF conforme a configuração da aplicação."
+          },
+          "response": []
+        },
+        {
+          "name": "Forgot password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/auth/password/forgot",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "auth",
+                "password",
+                "forgot"
+              ]
+            },
+            "description": "Payload ilustrativo; confirme o contrato do PasswordRecoveryController.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"usuario@example.com\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Reset password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/auth/password/reset",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "auth",
+                "password",
+                "reset"
+              ]
+            },
+            "description": "Payload ilustrativo; confirme os campos exigidos pelo controller.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"token\": \"{{password_reset_token}}\",\n  \"email\": \"usuario@example.com\",\n  \"password\": \"{{new_password}}\",\n  \"password_confirmation\": \"{{new_password}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "02 - Admin / Plan Tiers",
+      "item": [
+        {
+          "name": "List Plan Tiers",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/admin/plan-tiers",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "admin",
+                "plan-tiers"
+              ]
+            },
+            "description": "A rota aparece no grupo web; confirme se há autorização adicional no controller."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Plan Tier",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/admin/plan-tiers/{{resource_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "admin",
+                "plan-tiers"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Plan Tiers",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/admin/plan-tiers",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "admin",
+                "plan-tiers"
+              ]
+            },
+            "description": "Payload genérico ilustrativo: ajuste aos campos validados pelo controller.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Exemplo\",\n  \"description\": \"Descrição do exemplo\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Plan Tiers",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/admin/plan-tiers/{{resource_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "admin",
+                "plan-tiers"
+              ]
+            },
+            "description": "Payload genérico ilustrativo: ajuste aos campos validados pelo controller.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Exemplo atualizado\",\n  \"description\": \"Descrição atualizada\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Toggle status Plan Tiers",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/admin/plan-tiers/{{resource_id}}/status",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "admin",
+                "plan-tiers",
+                "status"
+              ]
+            },
+            "description": "Corpo ilustrativo. Verifique se o controller espera status, is_active ou outro formato.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "02 - Admin / Modules",
+      "item": [
+        {
+          "name": "List Modules",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/admin/modules",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "admin",
+                "modules"
+              ]
+            },
+            "description": "A rota aparece no grupo web; confirme se há autorização adicional no controller."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Module",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/admin/modules/{{resource_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "admin",
+                "modules"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Modules",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/admin/modules",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "admin",
+                "modules"
+              ]
+            },
+            "description": "Payload genérico ilustrativo: ajuste aos campos validados pelo controller.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Exemplo\",\n  \"description\": \"Descrição do exemplo\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Modules",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/admin/modules/{{resource_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "admin",
+                "modules"
+              ]
+            },
+            "description": "Payload genérico ilustrativo: ajuste aos campos validados pelo controller.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Exemplo atualizado\",\n  \"description\": \"Descrição atualizada\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Toggle status Modules",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/admin/modules/{{resource_id}}/status",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "admin",
+                "modules",
+                "status"
+              ]
+            },
+            "description": "Corpo ilustrativo. Verifique se o controller espera status, is_active ou outro formato.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "02 - Admin / Add-ons",
+      "item": [
+        {
+          "name": "List Add-ons",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/admin/add-ons",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "admin",
+                "add-ons"
+              ]
+            },
+            "description": "A rota aparece no grupo web; confirme se há autorização adicional no controller."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Add-on",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/admin/add-ons/{{resource_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "admin",
+                "add-ons"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Add-ons",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/admin/add-ons",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "admin",
+                "add-ons"
+              ]
+            },
+            "description": "Payload genérico ilustrativo: ajuste aos campos validados pelo controller.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Exemplo\",\n  \"description\": \"Descrição do exemplo\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Add-ons",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/admin/add-ons/{{resource_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "admin",
+                "add-ons"
+              ]
+            },
+            "description": "Payload genérico ilustrativo: ajuste aos campos validados pelo controller.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Exemplo atualizado\",\n  \"description\": \"Descrição atualizada\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Toggle status Add-ons",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/admin/add-ons/{{resource_id}}/status",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "admin",
+                "add-ons",
+                "status"
+              ]
+            },
+            "description": "Corpo ilustrativo. Verifique se o controller espera status, is_active ou outro formato.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "03 - Security",
+      "item": [
+        {
+          "name": "Generate CAPTCHA",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/security/captcha/generate",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "security",
+                "captcha",
+                "generate"
+              ]
+            },
+            "description": "Limitado por throttle:captcha."
+          },
+          "response": []
+        },
+        {
+          "name": "Verify CAPTCHA",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/security/captcha/verify",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "security",
+                "captcha",
+                "verify"
+              ]
+            },
+            "description": "Payload ilustrativo; use os nomes de campos retornados/esperados pelo CaptchaController.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"captcha_id\": \"{{captcha_id}}\",\n  \"captcha_answer\": \"{{captcha_answer}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "04 - Landing",
+      "item": [
+        {
+          "name": "Healthcheck",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/landing/health",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "landing",
+                "health"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create lead",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/landing/leads",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "landing",
+                "leads"
+              ]
+            },
+            "description": "Payload ilustrativo. A rota usa captcha.check:leads_landing; confirme o formato exigido pelo middleware/controller.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Nome do contato\",\n  \"email\": \"contato@example.com\",\n  \"phone\": \"11999999999\",\n  \"captcha_id\": \"{{captcha_id}}\",\n  \"captcha_answer\": \"{{captcha_answer}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "05 - Invites",
+      "item": [
+        {
+          "name": "Create invite (signed URL required)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/invite/createrInviteRegister",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "invite",
+                "createrInviteRegister"
+              ]
+            },
+            "description": "Esta rota exige middleware signed. Adicione a assinatura válida gerada pelo Laravel; uma URL simples não será suficiente.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"convidado@example.com\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Validate invite token",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/invite/validateToken/{{invite_token}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "invite",
+                "validateToken"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Pre-register (route has auth + guest middleware)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/invite/PreRegister",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "invite",
+                "PreRegister"
+              ]
+            },
+            "description": "A rota está dentro de auth:sanctum e também do middleware guest. Verifique se essa combinação é intencional e ajuste o payload conforme o controller.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Nome completo\",\n  \"email\": \"convidado@example.com\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "06 - Analytics",
+      "item": [
+        {
+          "name": "Track event (autenticado)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/analytics/track",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "analytics",
+                "track"
+              ]
+            },
+            "description": "Requer autenticação Sanctum e está limitado por throttle:tracking. Payload ilustrativo.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"event\": \"page_view\",\n  \"properties\": {\n    \"page\": \"/exemplo\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "07 - Dashboard",
+      "item": [
+        {
+          "name": "Overview (autenticado)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/dashboard/overview",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "dashboard",
+                "overview"
+              ]
+            },
+            "description": "Requer autenticação Sanctum."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "08 - Logs",
+      "item": [
+        {
+          "name": "List logs (autenticado)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/logs",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "logs"
+              ]
+            },
+            "description": "Requer autenticação Sanctum."
+          },
+          "response": []
+        },
+        {
+          "name": "Create log (autenticado)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/logs",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_prefix}}",
+                "logs"
+              ]
+            },
+            "description": "Payload ilustrativo; ajuste ao contrato de LogsController.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"level\": \"info\",\n  \"message\": \"Mensagem de exemplo\",\n  \"context\": {\n    \"source\": \"postman\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Base URL and API prefix are defined in the selected Postman environment.",
+          "// For Sanctum SPA authentication, request /sanctum/csrf-cookie first when required by your app.",
+          "// Postman cookie jar should retain session cookies between requests."
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000",
+      "type": "string"
+    },
+    {
+      "key": "api_prefix",
+      "value": "/api",
+      "type": "string"
+    },
+    {
+      "key": "resource_id",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "password",
+      "value": "ChangeMe123!",
+      "type": "string"
+    },
+    {
+      "key": "new_password",
+      "value": "ChangeMe456!",
+      "type": "string"
+    },
+    {
+      "key": "password_reset_token",
+      "value": "REPLACE_WITH_TOKEN",
+      "type": "string"
+    },
+    {
+      "key": "captcha_id",
+      "value": "REPLACE_WITH_CAPTCHA_ID",
+      "type": "string"
+    },
+    {
+      "key": "captcha_answer",
+      "value": "REPLACE_WITH_CAPTCHA_ANSWER",
+      "type": "string"
+    },
+    {
+      "key": "invite_token",
+      "value": "REPLACE_WITH_INVITE_TOKEN",
+      "type": "string"
+    }
+  ]
+}

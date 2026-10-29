@@ -1,0 +1,197 @@
+# Documentação Técnica — Testes Automatizados da API Laravel
+
+**Escopo:** Execução de testes automatizados, ajustes relacionados à autenticação e ao cadastro, configuração do banco de testes e identificação de falhas pendentes.
+
+## 1. Objetivo
+
+Documentar as alterações realizadas durante a preparação e execução dos testes automatizados da API, registrar os resultados obtidos e identificar os problemas que ainda precisam ser corrigidos.
+
+A suíte de testes utiliza o framework de testes do Laravel, baseado no PHPUnit, para verificar comportamentos de serviços e endpoints da aplicação.
+
+## 2. Alterações realizadas
+
+### 2.1. Correção do arquivo do controlador de convites
+
+Foi identificado um problema no caminho/nome do arquivo `InviteController`, que estava impedindo seu carregamento correto pelo autoload do Composer.
+
+**Ajustes realizados:**
+- Correção do nome do arquivo para incluir a extensão `.php`.
+- Atualização do autoload com `composer dump-autoload`.
+- Verificação das rotas de autenticação com `route:list`.
+
+### 2.2. Ajustes nos testes de autenticação
+
+Os testes de autenticação foram ajustados para utilizar os caminhos corretos das rotas versionadas da API.
+
+**Alterações realizadas:**
+- Atualização das URLs de autenticação para `/api/v1/auth/login` e `/api/v1/auth/logout`.
+- Ajuste do teste de logout para utilizar um usuário autenticado com o guard `web`.
+- Correção da asserção do teste de logout para verificar a mensagem no caminho `data.message`, conforme a estrutura de resposta observada.
+
+**Resultado:** os quatro testes de `LoginApiTest` foram aprovados, totalizando 11 asserções.
+
+### 2.3. Ajustes nos testes de cadastro
+
+Os testes de cadastro foram ajustados para utilizar a rota versionada `/api/v1/auth/register`.
+
+Durante a execução, três testes falharam inicialmente porque a tabela `companies` não existia no banco de testes. A validação do campo `company.cnpj` consulta a coluna `document` dessa tabela.
+
+Foram identificadas as migrations:
+- `database/migrations/DB_Geral/2026_02_25_010153_create_users_table.php`
+- `database/migrations/DB_Geral/2026_03_12_163035_create_companies_table.php`
+
+Como essas migrations estão em um subdiretório, elas não apareciam no resultado do comando padrão `migrate:status`. As migrations necessárias foram executadas individualmente no banco de testes, utilizando o parâmetro `--path`.
+
+**Resultado:** os quatro testes de `RegisterApiTest` passaram, com 21 asserções aprovadas.
+
+### 2.4. Isolamento do banco de testes
+
+Os comandos de teste foram executados com a variável `DB_DATABASE=testing`, por meio do serviço `laravel.test` do Docker Compose.
+
+Comando utilizado:
+
+```bash
+docker compose exec -e DB_DATABASE=testing laravel.test \
+  php artisan test
+```
+
+Essa configuração direciona a execução para o banco `testing`, desde que a configuração de conexão da aplicação respeite essa variável.
+
+**Observação:** deve-se manter o cuidado de não executar comandos destrutivos, como `migrate:fresh`, sem avaliar previamente o banco selecionado e os impactos.
+
+## 3. Resultado geral da suíte de testes
+
+A execução completa de `php artisan test` apresentou os seguintes resultados:
+
+| Indicador | Resultado |
+|---|---:|
+| Total de testes | 41 |
+| Testes aprovados | 37 |
+| Testes com falha | 4 |
+| Asserções reportadas | 123 |
+| Duração total | 5,58 segundos |
+
+**Status geral:** aprovação parcial. A maior parte dos testes passou, mas quatro testes de integração ainda apresentam falhas.
+
+## 4. Testes aprovados
+
+### 4.1. Testes unitários
+
+Foram aprovados os testes das seguintes áreas:
+
+- `Tests\Unit\ExampleTest`
+- `Tests\Unit\PasswordRecoveryServiceTest`
+- `Tests\Unit\Services\Admin\AddonManagementServiceTest`
+- `Tests\Unit\Services\Admin\ModuleManagementServiceTest`
+- `Tests\Unit\Services\Admin\PlanTierManagementServiceTest`
+- `Tests\Unit\Services\Auth\AuthenticationServiceTest`
+- `Tests\Unit\Services\Auth\RegisterAndContractServiceTest`
+
+Esses testes verificam comportamentos como autenticação, recuperação de senha, registro de usuário e empresa, criação e atualização de módulos, adicionais e planos, além do tratamento de exceções em serviços.
+
+### 4.2. Testes de integração e endpoints
+
+Também foram aprovados os testes de:
+
+- `Tests\Feature\ApiResponseMacroTest`
+- `Tests\Feature\Auth\LoginApiTest`
+- `Tests\Feature\Auth\RegisterApiTest`
+- `Tests\Feature\ExampleTest`
+- `Tests\Feature\ExceptionHandlingTest`
+
+Além disso, cinco dos seis testes executados em `Tests\Feature\LeadsApiTest` passaram.
+
+Os resultados indicam que os comportamentos cobertos por esses testes estão funcionando conforme as expectativas implementadas nas respectivas suítes.
+
+## 5. Falhas identificadas
+
+### 5.1. Analytics — processamento de eventos em lote
+
+**Teste:** `Tests\Feature\Analytics\TrackBatchApiTest`
+
+**Caso:** `it accepts a hybrid batch and reports partial validation results`
+
+**Resultado esperado:** HTTP 200, com informações sobre eventos aceitos, inseridos e inválidos.
+
+**Resultado obtido:** HTTP 401 — Unauthorized.
+
+**Interpretação:** a requisição foi recusada por uma condição de autenticação ou autorização antes de produzir a resposta esperada pelo teste. É necessário verificar os middlewares da rota, os requisitos de autenticação e a configuração utilizada pelo teste.
+
+### 5.2. Logs de auditoria — validação de payload
+
+**Teste:** `Tests\Feature\AuditLogsApiTest`
+
+**Caso:** `it rejects invalid audit log payload`
+
+**Resultado esperado:** HTTP 422, com erros de validação.
+
+**Resultado obtido:** HTTP 401 — Unauthorized.
+
+**Interpretação:** a autenticação está impedindo que o teste alcance a validação do payload. Deve-se verificar o mecanismo de autenticação exigido pela rota e preparar o teste de acordo com o contrato real do endpoint.
+
+### 5.3. Logs de auditoria — registro válido
+
+**Teste:** `Tests\Feature\AuditLogsApiTest`
+
+**Caso:** `it accepts a valid audit log and dispatches the job`
+
+**Resultado esperado:** HTTP 202, indicando aceitação da requisição e despacho do job.
+
+**Resultado obtido:** HTTP 401 — Unauthorized.
+
+**Interpretação:** assim como no teste anterior, a requisição está sendo recusada antes de alcançar o comportamento esperado. A correção deve considerar a autenticação e os middlewares da rota, sem remover proteções de segurança apenas para fazer o teste passar.
+
+### 5.4. Leads — proteção temporal do formulário
+
+**Teste:** `Tests\Feature\LeadsApiTest`
+
+**Caso:** `1 3 time trap is silently blocked for too fast and too old`
+
+**Resultado esperado:** HTTP 422 para submissões consideradas rápidas demais ou antigas demais.
+
+**Resultado obtido:** HTTP 201 — Created.
+
+**Interpretação:** pelo menos a primeira requisição, referente ao envio rápido, foi aceita e criou um registro quando o teste esperava uma rejeição. É necessário revisar a implementação da regra temporal, o formato de `form_started_at`, os limites definidos e a forma como os dados de tempo são construídos no teste.
+
+## 6. Avisos e observações adicionais
+
+### 6.1. Variável de ambiente ausente
+
+Durante a execução, o Docker Compose apresentou repetidamente o aviso:
+
+`DB_PASSWORD_LANDINGPAGE variable is not set. Defaulting to a blank string.`
+
+O aviso não impediu a execução dos testes apresentados. Entretanto, é recomendável verificar se essa variável é necessária para a conexão com o banco de landing page/tracking e configurá-la adequadamente no ambiente correspondente.
+
+### 6.2. Saída de depuração no teste de logout
+
+Durante a execução, foi exibida uma estrutura de resposta JSON contendo a mensagem `Logout realizado com sucesso`.
+
+Essa saída, isoladamente, não representa uma falha de teste. Recomenda-se verificar se existe alguma instrução de depuração, como `dump()`, `dd()` ou equivalente, nos testes ou no código relacionado, e removê-la quando não for mais necessária.
+
+### 6.3. Migrations em subdiretórios
+
+As migrations em `database/migrations/DB_Geral` não estavam aparecendo no resultado padrão de `php artisan migrate:status`. Isso exigiu a execução explícita das migrations necessárias para preparar o banco de testes.
+
+Como melhoria futura, recomenda-se revisar a estratégia de carregamento das migrations do projeto para tornar a preparação do ambiente de testes reproduzível e documentada.
+
+## 7. Plano de ação
+
+As próximas atividades recomendadas são:
+
+1. **Corrigir a autenticação dos testes de Analytics:** inspecionar a definição da rota `/api/v1/analytics/track`, seus middlewares e o mecanismo de autenticação esperado.
+2. **Corrigir a autenticação dos testes de auditoria:** inspecionar a rota `/api/v1/logs` e configurar os testes para reproduzir corretamente os requisitos do endpoint.
+3. **Revisar a regra temporal dos leads:** analisar a implementação do `time trap`, os valores de `form_started_at` e os limites de aceitação.
+4. **Reexecutar a suíte completa:** confirmar que as correções não provocaram regressões nos testes já aprovados.
+5. **Revisar a preparação do banco de testes:** documentar ou automatizar o carregamento das migrations necessárias.
+6. **Remover saídas de depuração:** manter a execução dos testes limpa e facilitar a identificação de falhas reais.
+
+## 8. Conclusão
+
+A execução dos testes demonstrou que os principais comportamentos cobertos por testes unitários, autenticação, cadastro e respostas padronizadas estão funcionando conforme as expectativas dos testes existentes.
+
+Os ajustes realizados também permitiram superar problemas de carregamento de classes, utilização das rotas versionadas e ausência de tabelas necessárias no banco de testes.
+
+Entretanto, o resultado de 37 testes aprovados e quatro falhas indica que ainda existem pontos pendentes na autenticação dos endpoints de Analytics e auditoria, além da proteção temporal do formulário de leads.
+
+A suíte deve ser considerada **parcialmente aprovada**, e uma nova execução completa deverá ser realizada após as correções para confirmar a estabilidade da aplicação.
