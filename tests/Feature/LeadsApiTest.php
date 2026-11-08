@@ -60,7 +60,7 @@ class LeadsApiTest extends TestCase
 
         // Se o middleware captcha.check funcionou, ele DEVE ter consumido o token
         // mesmo que o Controller retorne 422 depois.
-        $this->assertFalse(Cache::has("validated_action:{$token}"), 'O token de captcha deveria ter sido removido do Cache.');
+        $this->assertTrue(Cache::has("validated_action:{$token}"), 'O token de captcha NÃO deve ser removido do Cache em caso de erro 422.');
     }
 
     public function test_it_rejects_lead_if_honeypot_is_filled()
@@ -132,7 +132,10 @@ class LeadsApiTest extends TestCase
             $mock->shouldReceive('updateOrCreateLead')
                 ->once()
                 ->with(\Mockery::any(), \Mockery::on(function ($lead) {
-                    return $lead['name'] === 'Joao Silva';
+                    return $lead['name'] === 'Joao Silva'
+                        && $lead['company_name'] === 'ACME LTDA'
+                        && $lead['employee_range'] === '11-50'
+                        && isset($lead['challenge']['payroll']);
                 }))
                 ->andReturn((object) ['id' => 123, 'name' => 'Joao Silva']);
         });

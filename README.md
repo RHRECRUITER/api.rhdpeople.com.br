@@ -1,6 +1,6 @@
 # 🚀 RHdPeople
 
-O **RHdPeople** é uma plataforma backend robusta desenvolvida em **Laravel 13** (Experimental/Latest). O sistema atua como o núcleo de API para o ecossistema RHdPeople, oferecendo serviços avançados de autenticação *stateful* para SPA, proteção contra bots via captcha atômico, ingestão escalável de eventos (tracking), gestão de leads B2B e um complexo motor de assinaturas e licenciamento de usuários.
+O **RHdPeople** é uma plataforma backend robusta desenvolvida em **Laravel 13** (Experimental/Latest). O sistema atua como o núcleo de API para o ecossistema RHdPeople, oferecendo serviços avançados de autenticação *stateful* para SPA, proteção contra bots via captcha de uso único com retenção inteligente (UX-First), ingestão escalável de eventos (tracking), gestão de leads B2B e um complexo motor de assinaturas e licenciamento de usuários.
 
 A arquitetura foi desenhada com foco em modularidade, separando de forma clara as responsabilidades de segurança, análise de dados, conversão e regras de negócio.
 
