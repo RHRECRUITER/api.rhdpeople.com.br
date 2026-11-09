@@ -31,7 +31,7 @@ class InviteRequest extends FormRequest
                 TypeLicense::OPERACIONAL,
                 TypeLicense::COLABORADOR,
             ])],
-            'expiration_date' => ['required, date'],
+            'expiration_date' => ['required', 'date'],
             'license_id' => ['required', 'uuid', 'exists:license,id'],
             'id_plan' => ['required', 'uuid', 'exists:plan,id'],
         ];
