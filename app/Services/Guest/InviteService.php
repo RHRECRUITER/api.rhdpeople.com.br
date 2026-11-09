@@ -62,7 +62,7 @@ class InviteService
         }
 
         // Efetua o envio do convite via e-mail
-        if (! $this->generate->sendInvitation($InviteCreated['token'], $InviteCreated['name'], $email, $expirationDate)) {
+        if (! $this->generate->sendInvitation($InviteCreated['token'], $InviteCreated['name'], $email, $expirationDate, $typeLicense)) {
             return [
                 'data' => now(),
                 'message' => 'Envio malsucedido',

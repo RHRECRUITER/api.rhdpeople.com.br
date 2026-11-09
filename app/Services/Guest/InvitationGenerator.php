@@ -3,14 +3,15 @@
 namespace App\Services\Guest;
 
 use App\Enums\TypeLicense;
+use App\Mail\GuestInvitationMail;
 use App\Models\Guest\Invite;
 use App\Models\License;
 use App\Models\User;
 use App\Repositories\Eloquent\EloquentLicenseRepository;
 use App\Repositories\Eloquent\EloquentUserRepository;
 use App\Repositories\Eloquent\Guest\EloquentInviteRepository;
-use App\Services\Utilitary\Notification;
 use DateTime;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 
@@ -20,8 +21,6 @@ class InvitationGenerator
         protected EloquentUserRepository $repositoryUser,
         protected EloquentInviteRepository $repositoryInvite,
         protected EloquentLicenseRepository $repositoryLicense,
-        protected Notification $notification,
-        protected TemplateService $emailTemplate
     ) {}
 
     public function createrInvitation(string $email, string $idPlan, TypeLicense $type, DateTime $expirationDate): Invite
@@ -38,13 +37,21 @@ class InvitationGenerator
         ]);
     }
 
-    public function sendInvitation(string $token, string $recepientName, string $recepientEmail, DateTime $expirationDate): bool
+    public function sendInvitation(string $token, string $recepientName, string $recepientEmail, DateTime $expirationDate, TypeLicense $type): bool
     {
-        // Send the invitation to the guest via email.
-        $subjetc = 'Convite';
-        $messagerHTML = $this->emailTemplate->getInvitationTemplate($recepientName, $this->sendRegisterLink($token, $expirationDate));
+        // Envia o convite na fila de e-mails (async). O link assinado expira em $expirationDate
+        // independentemente de eventuais atrasos no processamento da fila.
+        try {
+            Mail::to($recepientEmail, $recepientName)->queue(new GuestInvitationMail(
+                $recepientName,
+                $this->sendRegisterLink($token, $expirationDate),
+                $type,
+            ));
 
-        return $this->notification->sendByEmail($recepientName, $recepientEmail, $subjetc, $messagerHTML);
+            return true;
+        } catch (\Throwable) {
+            return false;
+        }
     }
 
     public function createrUser(string $name, string $email, string $password): User
