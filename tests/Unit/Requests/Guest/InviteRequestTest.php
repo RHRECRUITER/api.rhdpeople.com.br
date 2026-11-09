@@ -10,7 +10,7 @@ class InviteRequestTest extends TestCase
 {
     public function test_regra_de_expiracao_eh_array_e_nao_string_unica(): void
     {
-        $request = new InviteRequest();
+        $request = new InviteRequest;
         $rules = $request->rules();
 
         $this->assertIsArray($rules['expiration_date']);
@@ -21,7 +21,7 @@ class InviteRequestTest extends TestCase
 
     public function test_validacao_de_data(): void
     {
-        $request = new InviteRequest();
+        $request = new InviteRequest;
         $rule = $request->rules()['expiration_date'];
 
         $this->assertTrue(
