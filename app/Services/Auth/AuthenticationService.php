@@ -24,7 +24,7 @@ class AuthenticationService
         $maxAttempts = (int) config('auth.rate_limit.max_attempts');
         $decaySeconds = (int) config('auth.rate_limit.decay_seconds');
 
-        $email = Str::lower(trim((string) ($credentials['email'] ?? '')));
+        $email = Str::lower(trim($credentials['email']));
         $rateKey = 'login:'.$email;
 
         // 1. Verifica se a conta já está temporariamente bloqueada
