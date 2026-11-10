@@ -68,8 +68,7 @@
         "allow-plugins": {
             "pestphp/pest-plugin": true,
             "php-http/discovery": true
-        },
-        "cache-dir": "/home4/rhrecr47/rhdpeople.com.br/cache"
+        }
     },
     "minimum-stability": "stable",
     "prefer-stable": true
