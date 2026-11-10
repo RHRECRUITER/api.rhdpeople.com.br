@@ -6,7 +6,7 @@
     "keywords": ["laravel", "framework"],
     "license": "MIT",
     "require": {
-        "php": "^8.3.36",
+        "php": "^8.3",
         "laravel/framework": "^13.10",
         "laravel/sanctum": "^4.3",
         "laravel/tinker": "^3.0",
@@ -68,8 +68,7 @@
         "allow-plugins": {
             "pestphp/pest-plugin": true,
             "php-http/discovery": true
-        },
-        "cache-dir": "/home4/rhrecr47/rhdpeople.com.br/cache"
+        }
     },
     "minimum-stability": "stable",
     "prefer-stable": true
