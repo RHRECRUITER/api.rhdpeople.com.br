@@ -75,7 +75,7 @@ jobs:
         DB_DATABASE: rhdpeople_test
         DB_USERNAME: root
         DB_PASSWORD: root
-        CACHE_STORE: redis
+        CACHE_STORE: array
         REDIS_HOST: 127.0.0.1
         QUEUE_CONNECTION: sync
         MAIL_MAILER: array
