@@ -114,4 +114,17 @@ return [
 
     'password_timeout' => env('AUTH_PASSWORD_TIMEOUT', 10800),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Login Rate Limiting (Brute Force Protection)
+    |--------------------------------------------------------------------------
+    |
+    | Define os limites de tentativas incorretas de login permitidas por e-mail
+    | e a janela de tempo de expiração do bloqueio temporário (em segundos).
+    |
+    */
+    'rate_limit' => [
+        'max_attempts' => (int) env('AUTH_LOGIN_MAX_ATTEMPTS', 5),
+        'decay_seconds' => (int) env('AUTH_LOGIN_DECAY_SECONDS', 900), // 15 minutos
+    ],
 ];
